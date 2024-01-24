@@ -64,7 +64,7 @@ pybarrnap depends on [pyhmmer](https://github.com/althonos/pyhmmer) and [biopyth
 
 ### CLI Example
 
-Click [here](https:/github.com/moshi4/pybarrnap/raw/main/examples/examples.zip) to download examples dataset.
+Click [here](https://github.com/moshi4/pybarrnap/raw/main/examples/examples.zip) to download examples dataset.
 
 #### CLI Example 1
 
