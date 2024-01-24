@@ -1,0 +1,66 @@
+[tool.poetry]
+name = "pybarrnap"
+version = "0.1.0"
+description = "Python implementation of barrnap (Bacterial ribosomal RNA predictor)"
+authors = ["moshi4"]
+license = "GPL-3.0-only"
+homepage = "https://github.com/moshi4/pybarrnap/"
+repository = "https://github.com/moshi4/pybarrnap/"
+readme = "README.md"
+keywords = ["bioinformatics"]
+classifiers = [
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+include = ["tests"]
+
+[tool.pytest.ini_options]
+minversion = "6.0"
+addopts = "--cov=src --tb=line --cov-report=xml --cov-report=term"
+testpaths = ["tests"]
+
+[tool.ruff]
+src = ["src", "tests"]
+line-length = 88
+
+# Lint Rules: https://docs.astral.sh/ruff/rules/
+[tool.ruff.lint]
+select = [
+    "F", # pyflakes
+    "E", # pycodestyle (Error)
+    "W", # pycodestyle (Warning)
+    "I", # isort
+    "D", # pydocstyle
+]
+ignore = [
+    "D100", # Missing docstring in public module
+    "D101", # Missing docstring in public class
+    "D104", # Missing docstring in public package
+    "D105", # Missing docstring in magic method
+    "D205", # 1 blank line required between summary line and description
+    "D400", # First line should end with a period
+    "D401", # First line should be in imperative mood
+    "D403", # First word of the first line should be properly capitalized
+    "D415", # First line should end with a period, question mark, or exclamation point
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "numpy"
+
+[tool.poetry.scripts]
+pybarrnap = "pybarrnap.scripts.pybarrnap:main"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+biopython = ">=1.79"
+pyhmmer = ">=0.10.4"
+
+[tool.poetry.group.dev.dependencies]
+ruff = ">=0.1.6"
+pytest = ">=7.1.2"
+pytest-cov = ">=4.0.0"
+ipykernel = ">=6.13.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
