@@ -48,7 +48,7 @@ pybarrnap depends on [pyhmmer](https://github.com/althonos/pyhmmer) and [biopyth
     Python implementation of barrnap (Bacterial ribosomal RNA predictor)
 
     positional arguments:
-      fasta              Input fasta file (or pipe)
+      fasta              Input fasta file (or stdin)
 
     optional arguments:
       -e , --evalue      E-value cutoff (default: 1e-06)
@@ -80,7 +80,7 @@ Output rRNA predition result to file
 
 #### CLI Example 3
 
-Use pybarrnap with pipe
+With pipe stdin
 
     cat examples/mitochondria.fna | pybarrnap -q -k mito | grep 16S
 

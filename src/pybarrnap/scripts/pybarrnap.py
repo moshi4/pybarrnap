@@ -103,7 +103,7 @@ def get_args() -> argparse.Namespace:
         "fasta",
         nargs="?",
         type=argparse.FileType("r"),
-        help="Input fasta file (or pipe)",
+        help="Input fasta file (or stdin)",
         default=sys.stdin,
     )
     default_evalue = 1e-6
