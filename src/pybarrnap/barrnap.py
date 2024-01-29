@@ -77,6 +77,11 @@ class Barrnap:
         if len(seq_records) == 0:
             logger.error("No sequence found in input fasta!!")
             exit(1)
+        fasta_name_list = [str(rec.name) for rec in seq_records]
+        if len(set(fasta_name_list)) != len(fasta_name_list):
+            logger.error("Duplicate name is contained in input fasta!!")
+            logger.error(f"Fasta name list = {fasta_name_list}")
+            exit(1)
         self._seq_records = seq_records
 
         # Convert SeqRecord to DigitalSequenceBlock for pyhmmer.nhmmer execution
