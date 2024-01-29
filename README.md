@@ -88,6 +88,8 @@ With pipe stdin
 
 pybarrnap provides simple API for running rRNA prediction and retrieving predicted rRNA.
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/moshi4/pybarrnap/blob/main/notebooks/pybarrnap.ipynb)
+
 ```python
 from pybarrnap import Barrnap
 from pybarrnap.utils import load_example_fasta_file
