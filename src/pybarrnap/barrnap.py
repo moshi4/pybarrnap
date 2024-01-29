@@ -77,6 +77,11 @@ class Barrnap:
         if len(seq_records) == 0:
             logger.error("No sequence found in input fasta!!")
             exit(1)
+        fasta_name_list = [str(rec.name) for rec in seq_records]
+        if len(set(fasta_name_list)) != len(fasta_name_list):
+            logger.error("Duplicate name is contained in input fasta!!")
+            logger.error(f"Fasta name list = {fasta_name_list}")
+            exit(1)
         self._seq_records = seq_records
 
         # Convert SeqRecord to DigitalSequenceBlock for pyhmmer.nhmmer execution
@@ -102,8 +107,8 @@ class Barrnap:
         self._kingdom = kingdom
         self._hmm_file = KINGDOM2HMM_FILE[kingdom]
 
-        if quiet:
-            logger.setLevel(logging.WARNING)
+        log_level = logging.WARNING if quiet else logging.INFO
+        logger.setLevel(log_level)
 
     def run(self) -> BarrnapResult:
         """Run rRNA prediction
@@ -131,17 +136,16 @@ class Barrnap:
         logger.info("Run pyhmmer.nhmmer")
         all_hmm_records: list[HmmRecord] = []
         with HMMFile(self._hmm_file) as hf:
+            opts = dict(sequences=self._seqs, cpus=self._threads, E=self._evalue)
             builder = Builder(alphabet=Alphabet.rna(), window_length=MAXLEN)
-            for hits in nhmmer(hf, self._seqs, cpus=self._threads, builder=builder):
+            for hits in nhmmer(hf, **opts, builder=builder):  # type: ignore
                 # Extract nhmmer result lines
                 hits_bytes = io.BytesIO()
                 hits.write(hits_bytes, header=False)
                 hits_lines = hits_bytes.getvalue().decode().splitlines()
-                # Parse HMM record and filter by evalue & length threshold
+                # Parse HMM record and filter by length threshold
                 hmm_records = HmmRecord.parse_lines(hits_lines)
                 for rec in hmm_records:
-                    if rec.evalue > self._evalue:
-                        continue
                     if rec.length < int(SEQTYPE2LEN[rec.query_name] * self._reject):
                         logger.info(f"Reject: {rec}")
                         continue

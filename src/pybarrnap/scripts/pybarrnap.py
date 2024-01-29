@@ -4,6 +4,7 @@ import argparse
 import io
 import os
 import sys
+import time
 from pathlib import Path
 
 from Bio.SeqRecord import SeqRecord
@@ -54,6 +55,8 @@ def run(
     quiet : bool, optional
         If True, print log on screen
     """
+    start_time = time.time()
+
     result = Barrnap(
         fasta=fasta,
         evalue=evalue,
@@ -80,7 +83,8 @@ def run(
     else:
         print(result.get_gff_text(), end="")
 
-    logger.info("Done")
+    elapsed_time = time.time() - start_time
+    logger.info(f"Done (elapsed time: {elapsed_time:.2f}[s])")
 
 
 def get_args() -> argparse.Namespace:
@@ -103,7 +107,7 @@ def get_args() -> argparse.Namespace:
         "fasta",
         nargs="?",
         type=argparse.FileType("r"),
-        help="Input fasta file (or pipe)",
+        help="Input fasta file (or stdin)",
         default=sys.stdin,
     )
     default_evalue = 1e-6
