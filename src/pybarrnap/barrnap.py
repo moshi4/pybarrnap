@@ -86,12 +86,12 @@ class Barrnap:
 
         # Convert SeqRecord to DigitalSequenceBlock for pyhmmer.nhmmer execution
         try:
-            seqs: list[DigitalSequence] = []
+            alphabet = Alphabet.rna()
+            self._seqs = DigitalSequenceBlock(alphabet)
             for rec in seq_records:
                 name, description = rec.name.encode(), rec.description.encode()
                 seq = TextSequence(name, description, sequence=str(rec.seq))
-                seqs.append(seq.digitize(Alphabet.rna()))
-            self._seqs = DigitalSequenceBlock(Alphabet.rna(), seqs)
+                self._seqs.append(seq.digitize(alphabet))
         except ValueError as e:
             logger.error(f"pybarrnap failed to run. {e}. Protein fasta as input?")
             exit(1)
