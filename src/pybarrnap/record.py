@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Iterable
 
 from Bio.SeqFeature import SeqFeature, SimpleLocation
+from pyhmmer.plan7 import Hit
 
 import pybarrnap
 from pybarrnap.config import SEQTYPE2LEN
@@ -46,6 +48,36 @@ class HmmRecord:
     def product(self) -> str:
         """product"""
         return self.query_name.replace("_r", " ribosomal ").replace("5_8", "5.8")
+
+    @staticmethod
+    def from_hit(hit: Hit) -> HmmRecord:
+        records = []
+        query_name = hit.hits.query_name.decode()
+        query_acc = "-" if hit.hits.query_accession is None else hit.hits.query_accession.decode()
+        dom = hit.best_domain
+        ali = dom.alignment
+        target_name = hit.name.decode()
+        target_acc = "-" if hit.accession is None else hit.accession.decode()
+        desc = "-" if hit.description is None else hit.description.decode()
+        return HmmRecord(
+            target_name=target_name,
+            target_acc=target_acc,
+            query_name=query_name,
+            query_acc=query_acc,
+            hmm_from=ali.hmm_from,
+            hmm_to=ali.hmm_to,
+            ali_from=ali.target_from,
+            ali_to=ali.target_to,
+            env_from=dom.env_from,
+            env_to=dom.env_to,
+            sq_len=ali.target_length,
+            strand=dom.strand,
+            evalue=hit.evalue,
+            score=hit.score,
+            bias=dom.bias,
+            description=desc,
+        )
+
 
     @staticmethod
     def parse_lines(lines: list[str]) -> list[HmmRecord]:

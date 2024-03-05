@@ -136,16 +136,11 @@ class Barrnap:
         logger.info("Run pyhmmer.nhmmer")
         all_hmm_records: list[HmmRecord] = []
         with HMMFile(self._hmm_file) as hf:
-            opts = dict(sequences=self._seqs, cpus=self._threads, E=self._evalue)
-            builder = Builder(alphabet=Alphabet.rna(), window_length=MAXLEN)
-            for hits in nhmmer(hf, **opts, builder=builder):  # type: ignore
-                # Extract nhmmer result lines
-                hits_bytes = io.BytesIO()
-                hits.write(hits_bytes, header=False)
-                hits_lines = hits_bytes.getvalue().decode().splitlines()
-                # Parse HMM record and filter by length threshold
-                hmm_records = HmmRecord.parse_lines(hits_lines)
-                for rec in hmm_records:
+            opts = dict(cpus=self._threads, E=self._evalue, window_length=MAXLEN)
+            for hits in nhmmer(hf, self._seqs, **opts):  # type: ignore
+                # Extract results and filter by length threshold
+                for hit in hits.reported:
+                    rec = HmmRecord.from_hit(hit)
                     if rec.length < int(SEQTYPE2LEN[rec.query_name] * self._reject):
                         logger.info(f"Reject: {rec}")
                         continue
