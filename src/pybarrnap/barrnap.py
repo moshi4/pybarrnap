@@ -107,6 +107,9 @@ class Barrnap:
         self._kingdom = kingdom
         self._hmm_file = KINGDOM2HMM_FILE[kingdom]
 
+        with HMMFile(self._hmm_file) as hf:
+            self._hmms = list(hf)
+
         log_level = logging.WARNING if quiet else logging.INFO
         logger.setLevel(log_level)
 
@@ -135,17 +138,16 @@ class Barrnap:
 
         logger.info("Run pyhmmer.nhmmer")
         all_hmm_records: list[HmmRecord] = []
-        with HMMFile(self._hmm_file) as hf:
-            opts = dict(cpus=self._threads, E=self._evalue, window_length=MAXLEN)
-            for hits in nhmmer(hf, self._seqs, **opts):  # type: ignore
-                # Extract results and filter by length threshold
-                for hit in hits.reported:
-                    rec = HmmRecord.from_hit(hit)
-                    if rec.length < int(SEQTYPE2LEN[rec.query_name] * self._reject):
-                        logger.info(f"Reject: {rec}")
-                        continue
-                    logger.info(f"Found: {rec}")
-                    all_hmm_records.append(rec)
+        opts = dict(cpus=self._threads, E=self._evalue, window_length=MAXLEN)
+        for hits in nhmmer(self._hmms, self._seqs, **opts):  # type: ignore
+            # Extract results and filter by length threshold
+            for hit in hits.reported:
+                rec = HmmRecord.from_hit(hit)
+                if rec.length < int(SEQTYPE2LEN[rec.query_name] * self._reject):
+                    logger.info(f"Reject: {rec}")
+                    continue
+                logger.info(f"Found: {rec}")
+                all_hmm_records.append(rec)
         logger.info(f"Found {len(all_hmm_records)} ribosomal RNA features")
 
         return BarrnapResult(
