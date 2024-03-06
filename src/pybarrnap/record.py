@@ -48,17 +48,21 @@ class HmmRecord:
         """product"""
         return self.query_name.replace("_r", " ribosomal ").replace("5_8", "5.8")
 
-    @staticmethod
-    def from_hit(hit: Hit) -> HmmRecord:
-        records = []
+    @classmethod
+    def from_hit(cls, hit: Hit) -> HmmRecord:
+        """Create a new record from a PyHMMER ``Hit``"""
         query_name = hit.hits.query_name.decode()
-        query_acc = "-" if hit.hits.query_accession is None else hit.hits.query_accession.decode()
+        query_acc = (
+            "-"
+            if hit.hits.query_accession is None
+            else hit.hits.query_accession.decode()
+        )
         dom = hit.best_domain
         ali = dom.alignment
         target_name = hit.name.decode()
         target_acc = "-" if hit.accession is None else hit.accession.decode()
         desc = "-" if hit.description is None else hit.description.decode()
-        return HmmRecord(
+        return cls(
             target_name=target_name,
             target_acc=target_acc,
             query_name=query_name,
@@ -76,7 +80,6 @@ class HmmRecord:
             bias=dom.bias,
             description=desc,
         )
-
 
     @staticmethod
     def parse_lines(lines: list[str]) -> list[HmmRecord]:

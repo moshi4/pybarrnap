@@ -12,8 +12,8 @@ import pyhmmer
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from pyhmmer import nhmmer
-from pyhmmer.easel import Alphabet, DigitalSequence, DigitalSequenceBlock, TextSequence
-from pyhmmer.plan7 import Builder, HMMFile
+from pyhmmer.easel import Alphabet, DigitalSequenceBlock, TextSequence
+from pyhmmer.plan7 import HMMFile
 
 import pybarrnap
 from pybarrnap.config import KINGDOM2HMM_FILE, KINGDOMS, MAXLEN, SEQTYPE2LEN
