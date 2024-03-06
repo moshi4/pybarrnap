@@ -63,21 +63,21 @@ def test_mitochondria_run():
 def test_null_fasta_run_failed():
     """Test pybarrnap run for null fasta file (failed)"""
     null_fasta_file = load_example_fasta_file("null.fna")
-    with pytest.raises(SystemExit):
+    with pytest.raises(ValueError):
         Barrnap(null_fasta_file)
 
 
 def test_dupid_fasta_run_failed():
     """Test pybarrnap run for duplication id fasta file (failed)"""
     dupid_fasta_file = load_example_fasta_file("dupid.fna")
-    with pytest.raises(SystemExit):
+    with pytest.raises(ValueError):
         Barrnap(dupid_fasta_file)
 
 
 def test_protein_fasta_run_failed():
     """Test pybarrnap run for protein fasta file (failed)"""
     protein_fasta_file = load_example_fasta_file("protein.fna")
-    with pytest.raises(SystemExit):
+    with pytest.raises(ValueError):
         Barrnap(protein_fasta_file)
 
 

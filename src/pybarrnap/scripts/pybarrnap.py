@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import io
 import os
+import signal
 import sys
 import time
 from pathlib import Path
@@ -57,24 +58,31 @@ def run(
     """
     start_time = time.time()
 
-    result = Barrnap(
-        fasta=fasta,
-        evalue=evalue,
-        lencutoff=lencutoff,
-        reject=reject,
-        threads=threads,
-        kingdom=kingdom,
-        quiet=quiet,
-    ).run()
+    try:
+        result = Barrnap(
+            fasta=fasta,
+            evalue=evalue,
+            lencutoff=lencutoff,
+            reject=reject,
+            threads=threads,
+            kingdom=kingdom,
+            quiet=quiet,
+        ).run()
+    except KeyboardInterrupt:
+        logger.error("Interrupted")
+        sys.exit(-signal.SIGINT)
+    except Exception as err:
+        logger.error(f"Error: {err}")
+        sys.exit(getattr(err, "errno", 1))
 
     # Write rRNA fasta
     if outseq:
         try:
             result.write_fasta(outseq)
             logger.info(f"Write rRNA fasta file '{outseq}'")
-        except FileNotFoundError:
+        except OSError as err:
             logger.error(f"Failed to write rRNA fasta file '{outseq}'")
-            exit(1)
+            sys.exit(err.errno)
 
     # Print rRNA GFF on screen
     logger.info("Sorting features and outputting rRNA GFF...")

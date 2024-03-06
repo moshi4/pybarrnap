@@ -75,13 +75,10 @@ class Barrnap:
         else:
             seq_records = fasta
         if len(seq_records) == 0:
-            logger.error("No sequence found in input fasta!!")
-            exit(1)
+            raise ValueError("No sequence found in input records")
         fasta_name_list = [str(rec.name) for rec in seq_records]
         if len(set(fasta_name_list)) != len(fasta_name_list):
-            logger.error("Duplicate name is contained in input fasta!!")
-            logger.error(f"Fasta name list = {fasta_name_list}")
-            exit(1)
+            raise ValueError("Duplicate names in input records")
         self._seq_records = seq_records
 
         # Convert SeqRecord to DigitalSequenceBlock for pyhmmer.nhmmer execution
@@ -93,8 +90,9 @@ class Barrnap:
                 seq = TextSequence(name, description, sequence=str(rec.seq))
                 self._seqs.append(seq.digitize(alphabet))
         except ValueError as e:
-            logger.error(f"pybarrnap failed to run. {e}. Protein fasta as input?")
-            exit(1)
+            raise ValueError(
+                "Failed to convert nucleotide sequences, maybe input contains proteins?"
+            ) from e
 
         # Set parameters
         self._evalue = evalue
