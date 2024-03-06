@@ -53,7 +53,7 @@ pybarrnap = "pybarrnap.scripts.pybarrnap:main"
 [tool.poetry.dependencies]
 python = "^3.8"
 biopython = ">=1.79"
-pyhmmer = ">=0.10.4"
+pyhmmer = ">=0.10.8"
 
 [tool.poetry.group.dev.dependencies]
 ruff = ">=0.1.6"

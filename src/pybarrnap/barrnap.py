@@ -12,8 +12,8 @@ import pyhmmer
 from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from pyhmmer import nhmmer
-from pyhmmer.easel import Alphabet, DigitalSequence, DigitalSequenceBlock, TextSequence
-from pyhmmer.plan7 import Builder, HMMFile
+from pyhmmer.easel import Alphabet, DigitalSequenceBlock, TextSequence
+from pyhmmer.plan7 import HMMFile
 
 import pybarrnap
 from pybarrnap.config import KINGDOM2HMM_FILE, KINGDOMS, MAXLEN, SEQTYPE2LEN
@@ -86,12 +86,12 @@ class Barrnap:
 
         # Convert SeqRecord to DigitalSequenceBlock for pyhmmer.nhmmer execution
         try:
-            seqs: list[DigitalSequence] = []
+            alphabet = Alphabet.rna()
+            self._seqs = DigitalSequenceBlock(alphabet)
             for rec in seq_records:
                 name, description = rec.name.encode(), rec.description.encode()
                 seq = TextSequence(name, description, sequence=str(rec.seq))
-                seqs.append(seq.digitize(Alphabet.rna()))
-            self._seqs = DigitalSequenceBlock(Alphabet.rna(), seqs)
+                self._seqs.append(seq.digitize(alphabet))
         except ValueError as e:
             logger.error(f"pybarrnap failed to run. {e}. Protein fasta as input?")
             exit(1)
@@ -106,6 +106,9 @@ class Barrnap:
             raise ValueError(f"{kingdom=} is invalid ({KINGDOMS}).")
         self._kingdom = kingdom
         self._hmm_file = KINGDOM2HMM_FILE[kingdom]
+
+        with HMMFile(self._hmm_file) as hf:
+            self._hmms = list(hf)
 
         log_level = logging.WARNING if quiet else logging.INFO
         logger.setLevel(log_level)
@@ -135,22 +138,16 @@ class Barrnap:
 
         logger.info("Run pyhmmer.nhmmer")
         all_hmm_records: list[HmmRecord] = []
-        with HMMFile(self._hmm_file) as hf:
-            opts = dict(sequences=self._seqs, cpus=self._threads, E=self._evalue)
-            builder = Builder(alphabet=Alphabet.rna(), window_length=MAXLEN)
-            for hits in nhmmer(hf, **opts, builder=builder):  # type: ignore
-                # Extract nhmmer result lines
-                hits_bytes = io.BytesIO()
-                hits.write(hits_bytes, header=False)
-                hits_lines = hits_bytes.getvalue().decode().splitlines()
-                # Parse HMM record and filter by length threshold
-                hmm_records = HmmRecord.parse_lines(hits_lines)
-                for rec in hmm_records:
-                    if rec.length < int(SEQTYPE2LEN[rec.query_name] * self._reject):
-                        logger.info(f"Reject: {rec}")
-                        continue
-                    logger.info(f"Found: {rec}")
-                    all_hmm_records.append(rec)
+        opts = dict(cpus=self._threads, E=self._evalue, window_length=MAXLEN)
+        for hits in nhmmer(self._hmms, self._seqs, **opts):  # type: ignore
+            # Extract results and filter by length threshold
+            for hit in hits.reported:
+                rec = HmmRecord.from_hit(hit)
+                if rec.length < int(SEQTYPE2LEN[rec.query_name] * self._reject):
+                    logger.info(f"Reject: {rec}")
+                    continue
+                logger.info(f"Found: {rec}")
+                all_hmm_records.append(rec)
         logger.info(f"Found {len(all_hmm_records)} ribosomal RNA features")
 
         return BarrnapResult(
