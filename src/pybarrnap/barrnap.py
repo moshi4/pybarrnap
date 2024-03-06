@@ -90,7 +90,9 @@ class Barrnap:
                 seq = TextSequence(name, description, sequence=str(rec.seq))
                 self._seqs.append(seq.digitize(alphabet))
         except ValueError as e:
-            raise ValueError("Failed to convert nucleotide sequences, maybe input contains proteins?") from e
+            raise ValueError(
+                "Failed to convert nucleotide sequences, maybe input contains proteins?"
+            ) from e
 
         # Set parameters
         self._evalue = evalue
