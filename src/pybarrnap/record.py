@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Iterable
 
 from Bio.SeqFeature import SeqFeature, SimpleLocation
 from pyhmmer.plan7 import Hit
