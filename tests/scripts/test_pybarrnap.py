@@ -19,6 +19,16 @@ def test_cli_with_min_option():
         pytest.fail(str(result))
 
 
+def test_cli_with_gzip_file(tmp_path: Path):
+    """Test cli with gzip file"""
+    gzip_fasta_file = load_example_fasta_file("mitochondria.fna.gz")
+    cmd = f"pybarrnap {gzip_fasta_file} -k mito"
+    result = sp.run(cmd, shell=True, capture_output=True)
+
+    if result.returncode != 0:
+        pytest.fail(str(result))
+
+
 def test_cli_with_all_option(tmp_path: Path):
     """Test cli with all option"""
     fasta_file = load_example_fasta_file("mitochondria.fna")

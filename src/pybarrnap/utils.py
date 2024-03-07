@@ -12,6 +12,7 @@ def load_example_fasta_file(filename: str) -> Path:
     - `archaea.fna`
     - `fungus.fna`
     - `mitochondria.fna`
+    - `mitochondria.fna.gz`
 
     Parameters
     ----------
@@ -24,7 +25,8 @@ def load_example_fasta_file(filename: str) -> Path:
         Fasta file path
     """
     fasta_dir = Path(__file__).parent / "example_data"
-    fasta_filenames = [f.name for f in fasta_dir.glob("*.fna")]
+    fasta_files = list(fasta_dir.glob("*.fna")) + list(fasta_dir.glob("*.fna.gz"))
+    fasta_filenames = [f.name for f in fasta_files]
 
     if filename.lower() in fasta_filenames:
         return fasta_dir / filename.lower()
