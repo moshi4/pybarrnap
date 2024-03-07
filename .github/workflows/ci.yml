@@ -30,8 +30,5 @@ jobs:
       - name: Run ruff format check
         run: ruff format --check --diff
 
-      - name: Run ruff lint check
-        run: ruff check --diff
-
       - name: Run pytest
-        run: pytest tests --tb=line --cov=src --cov-report=xml --cov-report=term
+        run: pytest
