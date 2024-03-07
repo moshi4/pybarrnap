@@ -12,8 +12,8 @@ from Bio.SeqRecord import SeqRecord
 
 import pybarrnap
 from pybarrnap import Barrnap
-from pybarrnap.barrnap import logger
 from pybarrnap.config import KINGDOMS
+from pybarrnap.logger import get_logger
 
 
 def main():
@@ -57,6 +57,7 @@ def run(
         If True, print log on screen
     """
     start_time = time.time()
+    logger = get_logger(__name__, quiet=quiet)
 
     try:
         result = Barrnap(

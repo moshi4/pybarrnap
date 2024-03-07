@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import gzip
 import io
-import logging
+import platform
 import sys
 from copy import deepcopy
 from pathlib import Path
@@ -17,16 +17,9 @@ from pyhmmer.plan7 import HMMFile
 
 import pybarrnap
 from pybarrnap.config import KINGDOM2HMM_FILE, KINGDOMS, MAXLEN, SEQTYPE2LEN
+from pybarrnap.logger import get_logger
 from pybarrnap.record import HmmRecord
 from pybarrnap.result import BarrnapResult
-
-# Set logger
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s | %(levelname)s | %(message)s",
-    datefmt="%Y-%m-%d %H:%M:%S",
-)
-logger = logging.getLogger(__name__)
 
 
 class Barrnap:
@@ -99,6 +92,7 @@ class Barrnap:
         self._lencutoff = lencutoff
         self._reject = reject
         self._threads = threads
+        self._quiet = quiet
 
         if kingdom not in KINGDOMS:
             raise ValueError(f"{kingdom=} is invalid ({KINGDOMS}).")
@@ -108,9 +102,6 @@ class Barrnap:
         with HMMFile(self._hmm_file) as hf:
             self._hmms = list(hf)
 
-        log_level = logging.WARNING if quiet else logging.INFO
-        logger.setLevel(log_level)
-
     def run(self) -> BarrnapResult:
         """Run rRNA prediction
 
@@ -119,8 +110,10 @@ class Barrnap:
         result : BarrnapResult
             Barrnap result
         """
+        logger = get_logger(__name__, quiet=self._quiet)
         logger.info(f"Run pybarrnap v{pybarrnap.__version__}")
         logger.info(f"Operating System: {sys.platform}")
+        logger.info(f"Python Version: v{platform.python_version()}")
         logger.info(f"Check Dependencies: pyhmmer v{pyhmmer.__version__} is installed")
         logger.info(f"Check Dependencies: biopython v{Bio.__version__} is installed")
         logger.info(f"Set Option: evalue={self._evalue}")
