@@ -112,7 +112,7 @@ class HmmRecord:
                 "rRNA",
                 str(self.start),
                 str(self.end),
-                str(self.evalue),
+                "0" if self.evalue == 0 else f"{self.evalue:.1e}",
                 self.strand,
                 ".",
                 tags,
