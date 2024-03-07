@@ -74,61 +74,11 @@ class HmmRecord:
             env_from=dom.env_from,
             env_to=dom.env_to,
             sq_len=ali.target_length,
-            strand=dom.strand,
+            strand=dom.strand,  # type: ignore
             evalue=hit.evalue,
             score=hit.score,
             bias=dom.bias,
             description=desc,
-        )
-
-    @staticmethod
-    def parse_lines(lines: list[str]) -> list[HmmRecord]:
-        """Parse HMM record lines
-
-        Parameters
-        ----------
-        lines : list[str]
-            HMM record lines
-
-        Returns
-        -------
-        records : list[HmmRecord]
-            HMM record list
-        """
-        return list(map(HmmRecord.parse_line, lines))
-
-    @staticmethod
-    def parse_line(line: str) -> HmmRecord:
-        """Parse HMM record line
-
-        Parameters
-        ----------
-        line : str
-            HMM record line
-
-        Returns
-        -------
-        record : HmmRecord
-            HMM record
-        """
-        split_line = line.split()
-        return HmmRecord(
-            target_name=split_line[0],
-            target_acc=split_line[1],
-            query_name=split_line[2],
-            query_acc=split_line[3],
-            hmm_from=int(split_line[4]),
-            hmm_to=int(split_line[5]),
-            ali_from=int(split_line[6]),
-            ali_to=int(split_line[7]),
-            env_from=int(split_line[8]),
-            env_to=int(split_line[9]),
-            sq_len=int(split_line[10]),
-            strand=split_line[11],
-            evalue=float(split_line[12]),
-            score=float(split_line[13]),
-            bias=float(split_line[14]),
-            description=" ".join(split_line[15:]),
         )
 
     def is_partial(self, lencutoff: float = 0.8) -> bool:
@@ -162,7 +112,7 @@ class HmmRecord:
                 "rRNA",
                 str(self.start),
                 str(self.end),
-                str(self.evalue),
+                "0" if self.evalue == 0 else f"{self.evalue:.1e}",
                 self.strand,
                 ".",
                 tags,

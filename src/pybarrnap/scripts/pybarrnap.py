@@ -1,19 +1,21 @@
 from __future__ import annotations
 
 import argparse
-import io
+import gzip
 import os
 import signal
 import sys
 import time
+from io import BufferedReader, TextIOWrapper
 from pathlib import Path
+from typing import Any
 
 from Bio.SeqRecord import SeqRecord
 
 import pybarrnap
 from pybarrnap import Barrnap
-from pybarrnap.barrnap import logger
 from pybarrnap.config import KINGDOMS
+from pybarrnap.logger import get_logger
 
 
 def main():
@@ -23,7 +25,7 @@ def main():
 
 
 def run(
-    fasta: str | Path | io.TextIOWrapper | SeqRecord | list[SeqRecord],
+    fasta: str | Path | TextIOWrapper | BufferedReader | SeqRecord | list[SeqRecord],
     *,
     evalue: float = 1e-6,
     lencutoff: float = 0.8,
@@ -37,7 +39,7 @@ def run(
     """
     Parameters
     ----------
-    fasta : str | Path | TextIOWrapper | SeqRecord | list[SeqRecord]
+    fasta : str | Path | TextIOWrapper | BufferedReader | SeqRecord | list[SeqRecord]
         Fasta file (handle) or SeqRecord or list[SeqRecord]
     evalue : float, optional
         E-value cutoff
@@ -57,17 +59,27 @@ def run(
         If True, print log on screen
     """
     start_time = time.time()
+    logger = get_logger(__name__, quiet=quiet)
+
+    opts: dict[str, Any] = dict(
+        evalue=evalue,
+        lencutoff=lencutoff,
+        reject=reject,
+        threads=threads,
+        kingdom=kingdom,
+        quiet=quiet,
+    )
 
     try:
-        result = Barrnap(
-            fasta=fasta,
-            evalue=evalue,
-            lencutoff=lencutoff,
-            reject=reject,
-            threads=threads,
-            kingdom=kingdom,
-            quiet=quiet,
-        ).run()
+        if isinstance(fasta, BufferedReader):
+            GZIP_MAGIC_NUM = b"\x1f\x8b"
+            if fasta.peek().startswith(GZIP_MAGIC_NUM):
+                with gzip.open(fasta, "rb") as f:
+                    result = Barrnap(TextIOWrapper(f), **opts).run()
+            else:
+                result = Barrnap(TextIOWrapper(fasta), **opts).run()
+        else:
+            result = Barrnap(fasta, **opts).run()
     except KeyboardInterrupt:
         logger.error("Interrupted")
         sys.exit(-signal.SIGINT)
@@ -106,7 +118,7 @@ def get_args() -> argparse.Namespace:
     description = "Python implementation of barrnap (Bacterial ribosomal RNA predictor)"
     parser = argparse.ArgumentParser(
         description=description,
-        usage="pybarrnap [options] genome.fna > genome_rrna.gff",
+        usage="pybarrnap [options] genome.fna[.gz] > genome_rrna.gff",
         add_help=False,
         allow_abbrev=False,
     )
@@ -114,7 +126,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "fasta",
         nargs="?",
-        type=argparse.FileType("r"),
+        type=argparse.FileType("rb"),
         help="Input fasta file (or stdin)",
         default=sys.stdin,
     )
@@ -225,7 +237,7 @@ def get_args() -> argparse.Namespace:
 
     # If input fasta is not seekable (not file) and waiting for stdin,
     # print help and exit
-    fasta: io.TextIOWrapper = args.fasta
+    fasta: BufferedReader = args.fasta
     if not fasta.seekable() and sys.stdin.isatty():
         parser.print_help()
         parser.exit(1)

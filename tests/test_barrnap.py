@@ -60,6 +60,16 @@ def test_mitochondria_run():
     assert len(result.get_rrna_seq_records()) == expected_rrna_count
 
 
+def test_gzip_mitochondria_run():
+    """Test barrnap run for gzip mitochondria"""
+    gzip_fasta_file = load_example_fasta_file("mitochondria.fna.gz")
+    barrnap = Barrnap(gzip_fasta_file, kingdom="mito")
+    result = barrnap.run()
+
+    expected_rrna_count = 2
+    assert len(result.get_rrna_seq_records()) == expected_rrna_count
+
+
 def test_null_fasta_run_failed():
     """Test pybarrnap run for null fasta file (failed)"""
     null_fasta_file = load_example_fasta_file("null.fna")

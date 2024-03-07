@@ -20,11 +20,6 @@ pybarrnap is a python implementation of [barrnap](https://github.com/tseemann/ba
 It provides a CLI compatible with barrnap and also provides a python API for running rRNA prediction and retrieving predicted rRNA.
 pybarrnap depends only on the python library and not on the external command-line tools nhmmer and bedtools.
 
-> [!NOTE]
-> pybarrnap is developed experimentally.
-> I have confirmed that it gives almost the same results as barrnap, but the evalue is slightly different.
-> Maybe there is a slight difference in behavior between `nhmmer` and `pyhmmer.nhmmer` when setting the window_length option?
-
 ## Installation
 
 `Python 3.8 or later` is required for installation.
@@ -43,7 +38,7 @@ pybarrnap depends on [pyhmmer](https://github.com/althonos/pyhmmer) and [biopyth
 ### Options
 
     $ pybarrnap --help
-    usage: pybarrnap [options] genome.fna > genome_rrna.gff
+    usage: pybarrnap [options] genome.fna[.gz] > genome_rrna.gff
 
     Python implementation of barrnap (Bacterial ribosomal RNA predictor)
 
