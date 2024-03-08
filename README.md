@@ -20,6 +20,11 @@ pybarrnap is a python implementation of [barrnap](https://github.com/tseemann/ba
 It provides a CLI compatible with barrnap and also provides a python API for running rRNA prediction and retrieving predicted rRNA.
 pybarrnap depends only on the python library and not on the external command-line tools nhmmer and bedtools.
 
+> [!NOTE]
+> Barrnap v0.9 uses the HMM profile database created from older releases of Rfam(11.0) and SILVA(128).
+> On the other hand, pybarrnap uses the HMM profile database created from the Rfam(14.10) latest release as of 2024/03.
+> Therefore, there will be some differences in results between Barrnap v0.9 and pybarrnap.
+
 ## Installation
 
 `Python 3.8 or later` is required for installation.
@@ -121,9 +126,9 @@ for rec in result.get_rrna_seq_records():
 
 ## LICENSE
 
-pybarrnap uses Barrnap v0.9 HMM profile database created from Rfam and SILVA.
+pybarrnap was reimplemented in python based on the perl implementation of Barrnap v0.9.
+HMM profile database for pybarrnap was created from Rfam(14.10) using a modified version of the database build script provided in Barrnap v0.9.
 
 - pybarrnap: [GPLv3](https://github.com/moshi4/pybarrnap/blob/main/LICENSE)  
-- Barrnap: [GPLv3](https://github.com/moshi4/pybarrnap/blob/main/src/pybarrnap/db/LICENSE.Barrnap)
-- Rfam: [CC0](https://github.com/moshi4/pybarrnap/blob/main/src/pybarrnap/db/LICENSE.Rfam)
-- SILVA: [Free for academic use](https://github.com/moshi4/pybarrnap/blob/main/src/pybarrnap/db/LICENSE.SILVA)
+- Barrnap([v0.9](https://github.com/tseemann/barrnap/tree/0.9)): [GPLv3](https://github.com/moshi4/pybarrnap/blob/main/src/pybarrnap/db/LICENSE.Barrnap)
+- Rfam([14.10](https://ftp.ebi.ac.uk/pub/databases/Rfam/14.10/)): [CC0](https://github.com/moshi4/pybarrnap/blob/main/src/pybarrnap/db/LICENSE.Rfam)
