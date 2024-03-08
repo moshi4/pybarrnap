@@ -1,10 +1,51 @@
-Rfam version 11.0 was produced at the Wellcome Trust Sanger
-Institute. Rfam is based on a sequence database called Rfamseq, which
-is derived from WGS and STD data classes from EMBL release 110.
+Rfam version 14.8 was produced at the European Bioinformatics Institute.
+Rfam is based on a sequence database called Rfamseq. The genome-centric
+version of Rfam is built from a collection of reference genomes,
+which are provided by Uniprot proteomes.
 
 Rfam is freely available under the Creative Commons Zero ("CC0")
 licence. (http://creativecommons.org/publicdomain/zero/1.0/)
 
-Rfam is powered by the Infernal package written by Eric Nawrockie at
-the Howard Hughes Janelia Farm Research Campus
-(http://www.hhmi.org/janelia/labs.html).
+Rfam is powered by the Infernal package (http://eddylab.org/infernal/).
+The current lead developer of Infernal is Eric Nawrocki,
+at the National Center for Biotechnology Information (NCBI,
+nawrocke@ncbi.nlm.nih.gov).
+
+
+If you make use of Rfam in your work we ask that you cite the
+following publications:
+
+I. Kalvari, J. Argasinska, N. Quinones-Olvera, E.P. Nawrocki, E. Rivas,
+S.R. Eddy, A. Bateman, R.D. Finn and A.I. Petrov
+Rfam 13.0: shifting to a genome-centric resource for non-coding RNA families
+Nucleic Acids Res. 2017 Sep;
+
+E.P. Nawrocki, S.W. Burge, A. Bateman, J. Daub, R.Y. Eberhardt, S.R. Eddy,
+E.W. Floden, P.P. Gardner, T.A. Jones, J.T. and R.D. Finn
+Rfam 12.0: updates to the RNA families database
+Nucleic Acids Res. 2014 Nov;
+
+Burge SW, Daub J, Eberhardt R, Tate JG, Barquist L, Nawrocki E, Eddy S, Gardner
+PP, Bateman A
+Rfam 11.0: 10 years of RNA families.
+Nucleic Acids Res. 2012 Nov;
+
+Gardner PP, Daub J, Tate JG, Nawrocki EP, Kolbe DL, Lindgreen S,
+Wilkinson AC, Finn RD, Griffiths-Jones S, Eddy SR, Bateman A
+Rfam: updates to the RNA families database.
+Nucleic Acids Res. 2008 Oct;
+
+Daub J, Gardner PP, Tate J, Ramskˆld D, Manske M, Scott WG,
+Weinberg Z, Griffiths-Jones S, Bateman A
+The RNA WikiProject: Community annotation of RNA families.
+RNA. 2008 Dec; 14:(12)2462-2464
+
+Rfam: annotating non-coding RNAs in complete genomes
+Sam Griffiths-Jones, Simon Moxon, Mhairi Marshall, Ajay Khanna,
+Sean R. Eddy and Alex Bateman
+Nucleic Acids Res. 2005 33:D121-D124
+
+Rfam: an RNA family database.
+Sam Griffiths-Jones, Alex Bateman, Mhairi Marshall, Ajay Khanna
+and Sean R. Eddy.
+Nucleic Acids Res. 2003 31:439-441
