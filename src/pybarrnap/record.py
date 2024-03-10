@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from pathlib import Path
 
 from Bio.SeqFeature import SeqFeature, SimpleLocation
 from pyhmmer.plan7 import Hit
@@ -10,18 +11,20 @@ from pybarrnap.config import SEQTYPE2LEN
 
 
 @dataclass
-class HmmRecord:
+class ModelRecord:
+    """Model Record Class (HMM or CM)
+
+    HMM: Hidden Marcov Model, CM: Covariance Model
+    """
+
     target_name: str
     target_acc: str
     query_name: str
     query_acc: str
-    hmm_from: int
-    hmm_to: int
+    mdl_from: int
+    mdl_to: int
     ali_from: int
     ali_to: int
-    env_from: int
-    env_to: int
-    sq_len: int
     strand: str
     evalue: float
     score: float
@@ -48,8 +51,8 @@ class HmmRecord:
         """product"""
         return self.query_name.replace("_r", " ribosomal ").replace("5_8", "5.8")
 
-    @classmethod
-    def from_hit(cls, hit: Hit) -> HmmRecord:
+    @staticmethod
+    def from_hit(hit: Hit) -> ModelRecord:
         """Create a new record from a PyHMMER ``Hit``"""
         query_name = hit.hits.query_name.decode()
         query_acc = (
@@ -62,18 +65,15 @@ class HmmRecord:
         target_name = hit.name.decode()
         target_acc = "-" if hit.accession is None else hit.accession.decode()
         desc = "-" if hit.description is None else hit.description.decode()
-        return cls(
+        return ModelRecord(
             target_name=target_name,
             target_acc=target_acc,
             query_name=query_name,
             query_acc=query_acc,
-            hmm_from=ali.hmm_from,
-            hmm_to=ali.hmm_to,
+            mdl_from=ali.hmm_from,
+            mdl_to=ali.hmm_to,
             ali_from=ali.target_from,
             ali_to=ali.target_to,
-            env_from=dom.env_from,
-            env_to=dom.env_to,
-            sq_len=ali.target_length,
             strand=dom.strand,  # type: ignore
             evalue=hit.evalue,
             score=hit.score,
@@ -81,9 +81,37 @@ class HmmRecord:
             description=desc,
         )
 
+    @staticmethod
+    def parse_from_cmscan_table(tbl_file: str | Path) -> list[ModelRecord]:
+        """Parse from cmscan result table (format=2)"""
+        mdl_records = []
+        with open(tbl_file) as f:
+            for line in f.read().splitlines():
+                if line.startswith("#"):
+                    continue
+                # Order of target and query is reversed in cmscan and nhmmer
+                split_line = line.split()
+                mdl_record = ModelRecord(
+                    target_name=split_line[3],
+                    target_acc=split_line[4],
+                    query_name=split_line[1],
+                    query_acc=split_line[2],
+                    mdl_from=int(split_line[7]),
+                    mdl_to=int(split_line[8]),
+                    ali_from=int(split_line[9]),
+                    ali_to=int(split_line[10]),
+                    strand=split_line[11],
+                    evalue=float(split_line[17]),
+                    score=float(split_line[16]),
+                    bias=float(split_line[15]),
+                    description=" ".join(split_line[26:]),
+                )
+                mdl_records.append(mdl_record)
+        return mdl_records
+
     def is_partial(self, lencutoff: float = 0.8) -> bool:
         """Check partial or not"""
-        return self.length < int(SEQTYPE2LEN[self.query_name] * lencutoff)
+        return self.length / SEQTYPE2LEN[self.query_name] < lencutoff
 
     def to_gff_line(self, lencutoff: float = 0.8) -> str:
         """Convert to gff line

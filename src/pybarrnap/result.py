@@ -8,14 +8,14 @@ from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from pybarrnap.record import HmmRecord
+from pybarrnap.record import ModelRecord
 
 
 @dataclass
 class BarrnapResult:
     """Barrnap Result Class"""
 
-    hmm_records: list[HmmRecord]
+    mdl_records: list[ModelRecord]
     seq_records: list[SeqRecord]
     kingdom: str
     evalue: float
@@ -23,28 +23,28 @@ class BarrnapResult:
     reject: float
 
     def __post_init__(self):
-        # Sort hmm records (1. fasta record order, 2. rRNA feature location order)
-        name2hmm_records: dict[str, list[HmmRecord]] = defaultdict(list)
-        for hmm_rec in self.hmm_records:
-            name2hmm_records[hmm_rec.target_name].append(hmm_rec)
-        sorted_all_hmm_records: list[HmmRecord] = []
+        # Sort model records (1. fasta record order, 2. rRNA feature location order)
+        name2mdl_records: dict[str, list[ModelRecord]] = defaultdict(list)
+        for mdl_rec in self.mdl_records:
+            name2mdl_records[mdl_rec.target_name].append(mdl_rec)
+        sorted_all_mdl_records: list[ModelRecord] = []
         for seq_rec in self.seq_records:
-            hmm_records = name2hmm_records[seq_rec.name]
-            sorted_hmm_records = sorted(hmm_records, key=lambda rec: rec.start)
-            name2hmm_records[seq_rec.name] = sorted_hmm_records
-            sorted_all_hmm_records.extend(sorted_hmm_records)
-        self.hmm_records = sorted_all_hmm_records
+            mdl_records = name2mdl_records[seq_rec.name]
+            sorted_mdl_records = sorted(mdl_records, key=lambda rec: rec.start)
+            name2mdl_records[seq_rec.name] = sorted_mdl_records
+            sorted_all_mdl_records.extend(sorted_mdl_records)
+        self.mdl_records = sorted_all_mdl_records
         # Add features to SeqRecord
         for seq_rec in self.seq_records:
-            hmm_records = name2hmm_records[seq_rec.name]
-            for hmm_rec in hmm_records:
-                seq_rec.features.append(hmm_rec.to_feature(self.lencutoff))
+            mdl_records = name2mdl_records[seq_rec.name]
+            for mdl_rec in mdl_records:
+                seq_rec.features.append(mdl_rec.to_feature(self.lencutoff))
 
     def get_gff_text(self) -> str:
         """Get rRNA GFF text"""
         text = "##gff-version 3\n"
-        for hmm_rec in self.hmm_records:
-            text += hmm_rec.to_gff_line(self.lencutoff) + "\n"
+        for mdl_rec in self.mdl_records:
+            text += mdl_rec.to_gff_line(self.lencutoff) + "\n"
         return text
 
     def get_gff_genome_fasta_text(self) -> str:
