@@ -3,8 +3,6 @@ from __future__ import annotations
 import subprocess as sp
 from pathlib import Path
 
-import pytest
-
 import pybarrnap
 from pybarrnap.utils import load_example_fasta_file
 from tests.marker import skipif_cmscan_not_installed
@@ -14,20 +12,18 @@ def test_cli_with_min_option():
     """Test cli default run"""
     fasta_file = load_example_fasta_file("bacteria.fna")
     cmd = f"pybarrnap {fasta_file}"
-    result = sp.run(cmd, shell=True, capture_output=True)
+    result = sp.run(cmd, shell=True)
 
-    if result.returncode != 0:
-        pytest.fail(str(result))
+    assert result.returncode == 0
 
 
 def test_cli_with_gzip_file():
     """Test cli with gzip file"""
     gzip_fasta_file = load_example_fasta_file("minimum.fna.gz")
     cmd = f"pybarrnap {gzip_fasta_file}"
-    result = sp.run(cmd, shell=True, capture_output=True)
+    result = sp.run(cmd, shell=True)
 
-    if result.returncode != 0:
-        pytest.fail(str(result))
+    assert result.returncode == 0
 
 
 def test_cli_with_all_option(tmp_path: Path):
@@ -36,11 +32,9 @@ def test_cli_with_all_option(tmp_path: Path):
     rrna_outfile = tmp_path / "rrna.fna"
 
     cmd = f"pybarrnap {fasta_file} -e 1e-6 -l 0.8 -r 0.25 -t 1 -k bac -o {rrna_outfile} -i -q"  # noqa: E501
-    result = sp.run(cmd, shell=True, capture_output=True)
+    result = sp.run(cmd, shell=True)
 
-    if result.returncode != 0:
-        pytest.fail(str(result))
-
+    assert result.returncode == 0
     assert rrna_outfile.exists()
 
 
@@ -53,9 +47,7 @@ def test_cli_with_accurate_option(tmp_path: Path):
     cmd = f"pybarrnap {fasta_file} --accurate -o {rrna_outfile} -i"
     result = sp.run(cmd, shell=True, capture_output=True)
 
-    if result.returncode != 0:
-        pytest.fail(str(result))
-
+    assert result.returncode == 0
     assert rrna_outfile.exists()
 
 

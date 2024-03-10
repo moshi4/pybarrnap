@@ -24,11 +24,17 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install optional dependent tool (infernal)
+      - name: Install optional dependent tool (infernal) on Ubuntu
         run: |
           sudo apt update -y
           sudo apt install -y infernal
         if: ${{ matrix.os=='ubuntu-latest'}}
+
+      - name: Install optional dependent tool (infernal) on MacOS
+        run: |
+          brew tap brewsci/bio
+          brew install infernal
+        if: ${{ matrix.os=='macos-latest'}}
 
       - name: Install dependencies
         run: pip install -e . pytest pytest-cov ruff
