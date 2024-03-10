@@ -34,6 +34,7 @@ def run(
     kingdom: str = "bac",
     outseq: str | Path | None = None,
     incseq: bool = False,
+    accurate: bool = False,
     quiet: bool = False,
 ) -> None:
     """
@@ -50,11 +51,14 @@ def run(
     threads : int, optional
         Number of threads
     kingdom : str, optional
-        Target kingdom (`bac`|`arc`|`euk`|`mito`)
+        Target kingdom (`bac`|`arc`|`euk`)
     outseq : str | Path | None, optional
         Output rRNA hit seqs as fasta file
     incseq : bool, optional
         Include fasta input sequences in GFF output
+    accurate : bool, optional
+        If True, use cmscan instead of pyhmmer.nhmmer.
+        cmscan(infernal) installation is required to enable this option.
     quiet : bool, optional
         If True, print log on screen
     """
@@ -67,6 +71,7 @@ def run(
         reject=reject,
         threads=threads,
         kingdom=kingdom,
+        accurate=accurate,
         quiet=quiet,
     )
 
@@ -173,7 +178,7 @@ def get_args() -> argparse.Namespace:
         "-k",
         "--kingdom",
         type=str,
-        help=f"Target kingdom [bac|arc|euk|mito] (default: '{default_kingdom}')",
+        help=f"Target kingdom [bac|arc|euk] (default: '{default_kingdom}')",
         default=default_kingdom,
         choices=KINGDOMS,
         metavar="",
@@ -191,6 +196,12 @@ def get_args() -> argparse.Namespace:
         "-i",
         "--incseq",
         help="Include FASTA input sequences in GFF output (default: OFF)",
+        action="store_true",
+    )
+    parser.add_argument(
+        "-a",
+        "--accurate",
+        help="Use cmscan instead of pyhmmer.nhmmer (default: OFF)",
         action="store_true",
     )
     parser.add_argument(

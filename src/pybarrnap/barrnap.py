@@ -2,10 +2,14 @@ from __future__ import annotations
 
 import gzip
 import io
+import logging
 import platform
+import shlex
+import subprocess as sp
 import sys
 from copy import deepcopy
 from pathlib import Path
+from tempfile import TemporaryDirectory
 
 import Bio
 import pyhmmer
@@ -16,10 +20,17 @@ from pyhmmer.easel import Alphabet, DigitalSequenceBlock, TextSequence
 from pyhmmer.plan7 import HMMFile
 
 import pybarrnap
-from pybarrnap.config import KINGDOM2HMM_FILE, KINGDOMS, MAXLEN, SEQTYPE2LEN
+from pybarrnap.config import (
+    KINGDOM2CM_DB,
+    KINGDOM2HMM_DB,
+    KINGDOMS,
+    MAXLEN,
+    SEQTYPE2LEN,
+)
 from pybarrnap.logger import get_logger
-from pybarrnap.record import HmmRecord
+from pybarrnap.record import ModelRecord
 from pybarrnap.result import BarrnapResult
+from pybarrnap.utils import get_cmscan_version, is_cmscan_installed
 
 
 class Barrnap:
@@ -34,7 +45,8 @@ class Barrnap:
         reject: float = 0.25,
         threads: int = 1,
         kingdom: str = "bac",
-        quiet: bool = False,
+        accurate: bool = False,
+        quiet: bool = True,
     ) -> None:
         """
         Parameters
@@ -50,9 +62,12 @@ class Barrnap:
         threads : int, optional
             Number of threads
         kingdom : str, optional
-            Target kingdom (`bac`|`arc`|`euk`|`mito`)
+            Target kingdom (`bac`|`arc`|`euk`)
+        accurate : bool, optional
+            If True, use cmscan(infernal) instead of pyhmmer.nhmmer.
+            cmscan installation is required to enable this option.
         quiet : bool, optional
-            If True, print log on screen
+            If True, no print log on screen
         """
         # Load fasta as SeqRecord list
         if isinstance(fasta, (str, Path)):
@@ -74,33 +89,17 @@ class Barrnap:
             raise ValueError("Duplicate names in input records")
         self._seq_records = seq_records
 
-        # Convert SeqRecord to DigitalSequenceBlock for pyhmmer.nhmmer execution
-        try:
-            alphabet = Alphabet.rna()
-            self._seqs = DigitalSequenceBlock(alphabet)
-            for rec in seq_records:
-                name, description = rec.name.encode(), rec.description.encode()
-                seq = TextSequence(name, description, sequence=str(rec.seq))
-                self._seqs.append(seq.digitize(alphabet))
-        except ValueError as e:
-            raise ValueError(
-                "Failed to convert nucleotide sequences, maybe input contains proteins?"
-            ) from e
-
         # Set parameters
         self._evalue = evalue
         self._lencutoff = lencutoff
         self._reject = reject
         self._threads = threads
+        self._accurate = accurate
         self._quiet = quiet
 
         if kingdom not in KINGDOMS:
             raise ValueError(f"{kingdom=} is invalid ({KINGDOMS}).")
         self._kingdom = kingdom
-        self._hmm_file = KINGDOM2HMM_FILE[kingdom]
-
-        with HMMFile(self._hmm_file) as hf:
-            self._hmms = list(hf)
 
     def run(self) -> BarrnapResult:
         """Run rRNA prediction
@@ -116,36 +115,112 @@ class Barrnap:
         logger.info(f"Python Version: v{platform.python_version()}")
         logger.info(f"Check Dependencies: pyhmmer v{pyhmmer.__version__} is installed")
         logger.info(f"Check Dependencies: biopython v{Bio.__version__} is installed")
+        if self._accurate:
+            if is_cmscan_installed():
+                version = f"v{get_cmscan_version()}"
+                logger.info(f"Check Dependencies: cmscan {version} is installed")
+            else:
+                logger.error("Check Dependencies: cmscan is not installed!!")
+                raise RuntimeError("Failed to run pybarrnap accurate mode")
         logger.info(f"Set Option: evalue={self._evalue}")
         logger.info(f"Set Option: lencutoff={self._lencutoff}")
         logger.info(f"Set Option: reject={self._reject}")
         logger.info(f"Set Option: threads={self._threads}")
         logger.info(f"Set Option: kingdom='{self._kingdom}'")
+        logger.info(f"Set Option: accurate={self._accurate}")
         logger.info(f"Number of Target Sequence = {len(self._seq_records)}")
         for idx, rec in enumerate(self._seq_records, 1):
             name, length, description = rec.name, len(str(rec.seq)), rec.description
             logger.info(f"Seq{idx}. {name=}, {length=:,}, {description=}")
-        logger.info(f"Use HMM DB: {self._hmm_file}")
 
-        logger.info("Run pyhmmer.nhmmer")
-        all_hmm_records: list[HmmRecord] = []
-        opts = dict(cpus=self._threads, E=self._evalue, window_length=MAXLEN)
-        for hits in nhmmer(self._hmms, self._seqs, **opts):  # type: ignore
-            # Extract results and filter by length threshold
-            for hit in hits.reported:
-                rec = HmmRecord.from_hit(hit)
-                if rec.length < int(SEQTYPE2LEN[rec.query_name] * self._reject):
-                    logger.info(f"Reject: {rec}")
-                    continue
+        if self._accurate:
+            mdl_records = self._run_cmscan(logger)
+        else:
+            mdl_records = self._run_nhmmer(logger)
+
+        filtered_mdl_records = []
+        for rec in mdl_records:
+            if rec.length / int(SEQTYPE2LEN[rec.query_name]) < self._reject:
+                logger.info(f"Reject: {rec}")
+            else:
                 logger.info(f"Found: {rec}")
-                all_hmm_records.append(rec)
-        logger.info(f"Found {len(all_hmm_records)} ribosomal RNA features")
+                filtered_mdl_records.append(rec)
+        logger.info(f"Found {len(filtered_mdl_records)} ribosomal RNA features")
 
         return BarrnapResult(
-            all_hmm_records,
+            filtered_mdl_records,
             deepcopy(self._seq_records),
             self._kingdom,
             self._evalue,
             self._lencutoff,
             self._reject,
         )
+
+    def _run_nhmmer(self, logger: logging.Logger) -> list[ModelRecord]:
+        """Run pyhmmer.nhmmer (faster, lower accuracy for rRNA prediction)"""
+        # Convert SeqRecord to DigitalSequenceBlock
+        try:
+            alphabet = Alphabet.rna()
+            seqs = DigitalSequenceBlock(alphabet)
+            for rec in self._seq_records:
+                name, description = rec.name.encode(), rec.description.encode()
+                seq = TextSequence(name, description, sequence=str(rec.seq))
+                seqs.append(seq.digitize(alphabet))
+        except ValueError as e:
+            raise ValueError(
+                "Failed to convert nucleotide sequences, maybe input contains proteins?"
+            ) from e
+
+        # Setup HMM database
+        hmm_db = KINGDOM2HMM_DB[self._kingdom]
+        with HMMFile(hmm_db) as hf:
+            hmms = list(hf)
+        logger.info(f"Use HMM DB: {hmm_db}")
+
+        # Run pyhmmer.nhmmer
+        logger.info("Running pyhmmer.nhmmer...")
+        mdl_records: list[ModelRecord] = []
+        opts = dict(cpus=self._threads, E=self._evalue, window_length=MAXLEN)
+        for hits in nhmmer(hmms, seqs, **opts):  # type: ignore
+            for hit in hits.reported:
+                mdl_records.append(ModelRecord.from_hit(hit))
+        return mdl_records
+
+    def _run_cmscan(self, logger: logging.Logger) -> list[ModelRecord]:
+        """Run cmscan (slower, higher accuracy for rRNA prediction)"""
+        # Setup CM database
+        cm_db = KINGDOM2CM_DB[self._kingdom]
+        logger.info(f"Use CM DB: {cm_db}")
+
+        # Run cmscan
+        logger.info("Running cmscan...")
+        with TemporaryDirectory() as tmpdir:
+            tmpdir = Path(tmpdir)
+            # Write tmp seq file
+            seq_fasta_file = tmpdir / "seq.fna"
+            SeqIO.write(self._seq_records, seq_fasta_file, format="fasta")
+            # Run cmscan
+            result_file = tmpdir / "result.tblout"
+            total_seq_len = sum([len(rec.seq) for rec in self._seq_records])
+            Z = 2 * total_seq_len / 1000000
+            cmd = f"cmscan --rfam --nohmmonly --noali --oskip --fmt 2 --cpu {self._threads} -E {self._evalue} -Z {Z} --tblout {result_file} {cm_db} {seq_fasta_file}"  # noqa: E501
+            logger.info(f"$ {cmd}")
+            cmd_args = shlex.split(cmd)
+            cmd_res = sp.run(cmd_args, capture_output=True, text=True)
+
+            if cmd_res.returncode == 0:
+                return ModelRecord.parse_from_cmscan_table(result_file)
+            else:
+                logger.error("Failed to run command below!!")
+                logger.error(f"$ {cmd}")
+                stdout_lines = cmd_res.stdout.splitlines()
+                if len(stdout_lines) > 0:
+                    logger.error("STDOUT:")
+                    for line in stdout_lines:
+                        logger.error(line)
+                stderr_lines = cmd_res.stderr.splitlines()
+                if len(stderr_lines) > 0:
+                    logger.error("STDERR:")
+                    for line in stderr_lines:
+                        logger.error(line)
+                raise RuntimeError("Failed to run cmscan.")
