@@ -17,13 +17,14 @@
 ## Overview
 
 pybarrnap is a python implementation of [barrnap](https://github.com/tseemann/barrnap) (Bacterial ribosomal RNA predictor).
-It provides a CLI compatible with barrnap and also provides a python API for running rRNA prediction and retrieving predicted rRNA.
-pybarrnap depends only on the python library and not on the external command-line tools nhmmer and bedtools.
+pybarrnap provides a CLI compatible with barrnap and also provides a python API for running rRNA prediction and retrieving predicted rRNA.
+pybarrnap default mode depends only on the python library and not on the external command-line tools nhmmer and bedtools.
+As an additional feature from barrnap, accurate mode is available by installing the external command line tool cmscan([infernal](http://eddylab.org/infernal/)).
 
 > [!NOTE]
 > Barrnap v0.9 uses the HMM profile database created from older releases of Rfam(11.0) and SILVA(128).
-> On the other hand, pybarrnap uses the HMM profile database created from the Rfam(14.10) latest release as of 2024/03.
-> Therefore, there will be some differences in results between Barrnap v0.9 and pybarrnap.
+> On the other hand, pybarrnap default mode uses the HMM profile database created from the Rfam(14.10).
+> Therefore, there will be some differences in results between Barrnap v0.9 and pybarrnap default mode.
 
 ## Installation
 
@@ -33,6 +34,10 @@ pybarrnap depends on [pyhmmer](https://github.com/althonos/pyhmmer) and [biopyth
 **Install PyPI package:**
 
     pip install pybarrnap
+
+**Use Docker ([Image Registry](https://github.com/moshi4/pybarrnap/pkgs/container/pybarrnap)):**
+
+    docker run -it --rm ghcr.io/moshi4/pybarrnap:latest pybarrnap -h
 
 ## CLI Usage
 
@@ -55,12 +60,17 @@ pybarrnap depends on [pyhmmer](https://github.com/althonos/pyhmmer) and [biopyth
       -l , --lencutoff   Proportional length threshold to label as partial (default: 0.8)
       -r , --reject      Proportional length threshold to reject prediction (default: 0.25)
       -t , --threads     Number of threads (default: 1)
-      -k , --kingdom     Target kingdom [bac|arc|euk|mito] (default: 'bac')
+      -k , --kingdom     Target kingdom [bac|arc|euk] (default: 'bac')
       -o , --outseq      Output rRNA hit seqs as fasta file (default: None)
       -i, --incseq       Include FASTA input sequences in GFF output (default: OFF)
+      -a, --accurate     Use cmscan instead of pyhmmer.nhmmer (default: OFF)
       -q, --quiet        No print log on screen (default: OFF)
       -v, --version      Print version information
       -h, --help         Show this help message and exit
+
+> [!TIP]
+> If `--accurate` option is set, cmscan(infernal) is used for rRNA search instead of pyhmmer.nhmmer.
+> Although cmscan is slower than pyhmmer.nhmmer, it is expected to give more accurate results because it performs rRNA searches using RNA secondary structure profiles.
 
 ### CLI Example
 
@@ -82,7 +92,7 @@ Output rRNA predition result to file
 
 With pipe stdin
 
-    cat examples/mitochondria.fna | pybarrnap -q -k mito | grep 16S
+    cat examples/fungus.fna | pybarrnap -q -k euk | grep 28S
 
 ## API Usage
 
@@ -98,7 +108,16 @@ from pybarrnap.utils import load_example_fasta_file
 fasta_file = load_example_fasta_file("bacteria.fna")
 
 # Run pybarrnap rRNA prediction
-barrnap = Barrnap(fasta_file, evalue=1e-6, lencutoff=0.8, reject=0.25, threads=1, kingdom="bac", quiet=False)
+barrnap = Barrnap(
+    fasta_file,
+    evalue=1e-6,
+    lencutoff=0.8,
+    reject=0.25,
+    threads=1,
+    kingdom="bac",
+    accurate=False,
+    quiet=False,
+)
 result = barrnap.run()
 
 # Output rRNA GFF file
@@ -127,7 +146,7 @@ for rec in result.get_rrna_seq_records():
 ## LICENSE
 
 pybarrnap was reimplemented in python based on the perl implementation of Barrnap v0.9.
-HMM profile database for pybarrnap was created from Rfam(14.10) using a modified version of the database build script provided in Barrnap v0.9.
+HMM(Hidden Marcov Model) and CM(Covariance Model) profile database for pybarrnap was created from Rfam(14.10).
 
 - pybarrnap: [GPLv3](https://github.com/moshi4/pybarrnap/blob/main/LICENSE)  
 - Barrnap([v0.9](https://github.com/tseemann/barrnap/tree/0.9)): [GPLv3](https://github.com/moshi4/pybarrnap/blob/main/src/pybarrnap/db/LICENSE.Barrnap)
