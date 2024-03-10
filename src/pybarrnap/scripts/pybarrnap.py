@@ -50,7 +50,7 @@ def run(
     threads : int, optional
         Number of threads
     kingdom : str, optional
-        Target kingdom (`bac`|`arc`|`euk`|`mito`)
+        Target kingdom (`bac`|`arc`|`euk`)
     outseq : str | Path | None, optional
         Output rRNA hit seqs as fasta file
     incseq : bool, optional
@@ -173,7 +173,7 @@ def get_args() -> argparse.Namespace:
         "-k",
         "--kingdom",
         type=str,
-        help=f"Target kingdom [bac|arc|euk|mito] (default: '{default_kingdom}')",
+        help=f"Target kingdom [bac|arc|euk] (default: '{default_kingdom}')",
         default=default_kingdom,
         choices=KINGDOMS,
         metavar="",

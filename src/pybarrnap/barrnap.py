@@ -50,7 +50,7 @@ class Barrnap:
         threads : int, optional
             Number of threads
         kingdom : str, optional
-            Target kingdom (`bac`|`arc`|`euk`|`mito`)
+            Target kingdom (`bac`|`arc`|`euk`)
         quiet : bool, optional
             If True, print log on screen
         """
