@@ -29,11 +29,16 @@ As an additional feature from barrnap, accurate mode is available by installing 
 ## Installation
 
 `Python 3.8 or later` is required for installation.
-pybarrnap depends on [pyhmmer](https://github.com/althonos/pyhmmer) and [biopython](https://github.com/biopython/biopython).
+pybarrnap depends on [pyhmmer](https://github.com/althonos/pyhmmer) and [biopython](https://github.com/biopython/biopython) python library.
+If accurate mode is required, please install [infernal](http://eddylab.org/infernal/) additionally.
 
 **Install PyPI package:**
 
     pip install pybarrnap
+
+**Install bioconda package:**
+
+    conda install -c conda-forge -c bioconda pybarrnap
 
 **Use Docker ([Image Registry](https://github.com/moshi4/pybarrnap/pkgs/container/pybarrnap)):**
 
