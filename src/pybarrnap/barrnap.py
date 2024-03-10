@@ -7,6 +7,7 @@ import platform
 import shlex
 import subprocess as sp
 import sys
+import textwrap
 from copy import deepcopy
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -120,8 +121,23 @@ class Barrnap:
                 version = f"v{get_cmscan_version()}"
                 logger.info(f"Check Dependencies: cmscan {version} is installed")
             else:
-                logger.error("Check Dependencies: cmscan is not installed!!")
-                raise RuntimeError("Failed to run pybarrnap accurate mode")
+                err_msg = textwrap.dedent(
+                    """
+                    Check Dependencies: cmscan is not installed!!
+
+                    Please install cmscan(infernal) to enable pybarrnap accurate mode.
+
+                    # Install bioconda package
+                    $ conda install -c bioconda infernal
+
+                    # Install ubuntu(debian) package
+                    $ sudo apt-get install -y infernal
+
+                    """
+                )
+                for err_msg_line in err_msg.splitlines():
+                    logger.error(err_msg_line)
+                raise RuntimeError("Failed to run pybarrnap accurate mode.")
         logger.info(f"Set Option: evalue={self._evalue}")
         logger.info(f"Set Option: lencutoff={self._lencutoff}")
         logger.info(f"Set Option: reject={self._reject}")
