@@ -133,6 +133,10 @@ class Barrnap:
                     # Install ubuntu(debian) package
                     $ sudo apt-get install -y infernal
 
+                    # Install homebrew science package
+                    $ brew tap brewsci/bio
+                    $ brew install infernal
+
                     """
                 )
                 for err_msg_line in err_msg.splitlines():
