@@ -7,6 +7,7 @@ import pytest
 
 import pybarrnap
 from pybarrnap.utils import load_example_fasta_file
+from tests.marker import skipif_cmscan_not_installed
 
 
 def test_cli_with_min_option():
@@ -19,10 +20,10 @@ def test_cli_with_min_option():
         pytest.fail(str(result))
 
 
-def test_cli_with_gzip_file(tmp_path: Path):
+def test_cli_with_gzip_file():
     """Test cli with gzip file"""
-    gzip_fasta_file = load_example_fasta_file("mitochondria.fna.gz")
-    cmd = f"pybarrnap {gzip_fasta_file} -k mito"
+    gzip_fasta_file = load_example_fasta_file("minimum.fna.gz")
+    cmd = f"pybarrnap {gzip_fasta_file}"
     result = sp.run(cmd, shell=True, capture_output=True)
 
     if result.returncode != 0:
@@ -31,11 +32,25 @@ def test_cli_with_gzip_file(tmp_path: Path):
 
 def test_cli_with_all_option(tmp_path: Path):
     """Test cli with all option"""
-    fasta_file = load_example_fasta_file("mitochondria.fna")
+    fasta_file = load_example_fasta_file("minimum.fna")
     rrna_outfile = tmp_path / "rrna.fna"
 
-    cmd = f"pybarrnap {fasta_file} "
-    cmd += f"-e 1e-6 -l 0.8 -r 0.25 -t 1 -k mito -o {rrna_outfile} -i -q"
+    cmd = f"pybarrnap {fasta_file} -e 1e-6 -l 0.8 -r 0.25 -t 1 -k bac -o {rrna_outfile} -i -q"  # noqa: E501
+    result = sp.run(cmd, shell=True, capture_output=True)
+
+    if result.returncode != 0:
+        pytest.fail(str(result))
+
+    assert rrna_outfile.exists()
+
+
+@skipif_cmscan_not_installed
+def test_cli_with_accurate_option(tmp_path: Path):
+    """Test cli with accurate option"""
+    fasta_file = load_example_fasta_file("minimum.fna")
+    rrna_outfile = tmp_path / "rrna.fna"
+
+    cmd = f"pybarrnap {fasta_file} --accurate -o {rrna_outfile} -i"
     result = sp.run(cmd, shell=True, capture_output=True)
 
     if result.returncode != 0:
@@ -46,7 +61,7 @@ def test_cli_with_all_option(tmp_path: Path):
 
 def test_cli_with_invalid_option_value():
     """Test cli with invalid option value"""
-    fasta_file = load_example_fasta_file("mitochondria.fna")
+    fasta_file = load_example_fasta_file("minimum.fna")
     # Invalid evalue (expected: 'v > 0')
     cmd = f"pybarrnap {fasta_file} --evalue 0"
     result = sp.run(cmd, shell=True)
@@ -67,7 +82,7 @@ def test_cli_with_invalid_option_value():
 
 def test_cli_fasta_input_cases(tmp_path: Path):
     """Test cli fasta input cases"""
-    fasta_file = load_example_fasta_file("mitochondria.fna")
+    fasta_file = load_example_fasta_file("minimum.fna")
     # Case1: pipe
     cmd = f"cat {fasta_file} | pybarrnap"
     result = sp.run(cmd, shell=True)
