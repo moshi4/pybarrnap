@@ -11,8 +11,6 @@ def load_example_fasta_file(filename: str) -> Path:
     - `bacteria.fna`
     - `archaea.fna`
     - `fungus.fna`
-    - `mitochondria.fna`
-    - `mitochondria.fna.gz`
 
     Parameters
     ----------
