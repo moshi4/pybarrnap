@@ -4,6 +4,7 @@
 ![OS](https://img.shields.io/badge/OS-_Mac_|_Linux-steelblue)
 ![License](https://img.shields.io/badge/license-GPLv3-blue)
 [![Latest PyPI version](https://img.shields.io/pypi/v/pybarrnap.svg)](https://pypi.python.org/pypi/pybarrnap)
+[![Bioconda](https://img.shields.io/conda/vn/bioconda/pybarrnap.svg?color=green)](https://anaconda.org/bioconda/pybarrnap)
 [![CI](https://github.com/moshi4/pybarrnap/actions/workflows/ci.yml/badge.svg)](https://github.com/moshi4/pybarrnap/actions/workflows/ci.yml)
 
 ## Table of contents
@@ -19,10 +20,10 @@
 pybarrnap is a python implementation of [barrnap](https://github.com/tseemann/barrnap) (Bacterial ribosomal RNA predictor).
 pybarrnap provides a CLI compatible with barrnap and also provides a python API for running rRNA prediction and retrieving predicted rRNA.
 pybarrnap default mode depends only on the python library and not on the external command-line tools nhmmer and bedtools.
-As an additional feature from barrnap, accurate mode is available by installing the external command line tool cmscan([infernal](http://eddylab.org/infernal/)).
+As an additional feature from barrnap, accurate mode is available by installing the external command-line tool cmscan([infernal](http://eddylab.org/infernal/)).
 
 > [!NOTE]
-> Barrnap v0.9 uses the HMM profile database created from older releases of Rfam(11.0) and SILVA(128).
+> Barrnap v0.9 uses the HMM profile database created from older releases of Rfam and SILVA.
 > On the other hand, pybarrnap default mode uses the HMM profile database created from the Rfam(14.10).
 > Therefore, there will be some differences in results between Barrnap v0.9 and pybarrnap default mode.
 
@@ -65,7 +66,8 @@ If accurate mode is required, please install [infernal](http://eddylab.org/infer
       -l , --lencutoff   Proportional length threshold to label as partial (default: 0.8)
       -r , --reject      Proportional length threshold to reject prediction (default: 0.25)
       -t , --threads     Number of threads (default: 1)
-      -k , --kingdom     Target kingdom [bac|arc|euk] (default: 'bac')
+      -k , --kingdom     Target kingdom [bac|arc|euk|all] (default: 'bac')
+                         kingdom='all' is available only when set with `--accurate` option
       -o , --outseq      Output rRNA hit seqs as fasta file (default: None)
       -i, --incseq       Include FASTA input sequences in GFF output (default: OFF)
       -a, --accurate     Use cmscan instead of pyhmmer.nhmmer (default: OFF)
