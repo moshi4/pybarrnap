@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import gzip
 import io
+import itertools
 import logging
+import multiprocessing as mp
 import platform
 import shlex
 import subprocess as sp
@@ -17,7 +19,7 @@ from Bio import SeqIO
 from Bio.SeqRecord import SeqRecord
 from pyhmmer import nhmmer
 from pyhmmer.easel import Alphabet, DigitalSequenceBlock, TextSequence
-from pyhmmer.plan7 import HMMFile
+from pyhmmer.plan7 import HMM, HMMFile
 
 import pybarrnap
 from pybarrnap.config import (
@@ -30,7 +32,7 @@ from pybarrnap.config import (
 from pybarrnap.logger import get_logger
 from pybarrnap.record import ModelRecord
 from pybarrnap.result import BarrnapResult
-from pybarrnap.utils import get_cmscan_version, is_cmscan_installed
+from pybarrnap.utils import array_split, get_cmscan_version, is_cmscan_installed
 
 
 class Barrnap:
@@ -180,19 +182,6 @@ class Barrnap:
 
     def _run_nhmmer(self, logger: logging.Logger) -> list[ModelRecord]:
         """Run pyhmmer.nhmmer (faster, lower accuracy for rRNA prediction)"""
-        # Convert SeqRecord to DigitalSequenceBlock
-        try:
-            alphabet = Alphabet.rna()
-            seqs = DigitalSequenceBlock(alphabet)
-            for rec in self._seq_records:
-                name, description = rec.name.encode(), rec.description.encode()
-                seq = TextSequence(name, description, sequence=str(rec.seq))
-                seqs.append(seq.digitize(alphabet))
-        except ValueError as e:
-            raise ValueError(
-                "Failed to convert nucleotide sequences, maybe input contains proteins?"
-            ) from e
-
         # Setup HMM database
         hmm_db = KINGDOM2HMM_DB[self._kingdom]
         with HMMFile(hmm_db) as hf:
@@ -201,12 +190,31 @@ class Barrnap:
 
         # Run pyhmmer.nhmmer
         logger.info("Running pyhmmer.nhmmer...")
-        mdl_records: list[ModelRecord] = []
-        opts = dict(cpus=self._threads, E=self._evalue, window_length=MAXLEN)
-        for hits in nhmmer(hmms, seqs, **opts):  # type: ignore
-            for hit in hits.reported:
-                mdl_records.append(ModelRecord.from_hit(hit))
-        return mdl_records
+        seq_num = len(self._seq_records)
+        n = self._threads if seq_num >= self._threads else seq_num
+        try:
+            # Convert SeqRecord to DigitalSequenceBlock
+            block_list: list[DigitalSequenceBlock] = []
+            alphabet = Alphabet.rna()
+            for recs in array_split(self._seq_records, n):
+                block = DigitalSequenceBlock(alphabet)
+                for rec in recs:
+                    name, description = rec.name.encode(), rec.description.encode()
+                    seq = TextSequence(name, description, sequence=str(rec.seq))
+                    block.append(seq.digitize(alphabet))
+                block_list.append(block)
+        except ValueError as e:
+            raise ValueError(
+                "Failed to convert nucleotide sequences, maybe input contains proteins?"
+            ) from e
+
+        worker_args = []
+        for block in block_list:
+            worker_args.append([block, self._evalue, hmms])
+
+        with mp.Pool(n) as pool:
+            results = pool.starmap(_nhmmer_worker, worker_args)
+        return list(itertools.chain.from_iterable(results))
 
     def _run_cmscan(self, logger: logging.Logger) -> list[ModelRecord]:
         """Run cmscan (slower, higher accuracy for rRNA prediction)"""
@@ -216,33 +224,67 @@ class Barrnap:
 
         # Run cmscan
         logger.info("Running cmscan...")
-        with TemporaryDirectory() as tmpdir:
-            tmpdir = Path(tmpdir)
-            # Write tmp seq file
-            seq_fasta_file = tmpdir / "seq.fna"
-            SeqIO.write(self._seq_records, seq_fasta_file, format="fasta")
-            # Run cmscan
-            result_file = tmpdir / "result.tblout"
-            total_seq_len = sum([len(rec.seq) for rec in self._seq_records])
-            Z = 2 * total_seq_len / 1000000
-            cmd = f"cmscan --rfam --nohmmonly --noali --oskip --fmt 2 --cpu {self._threads} -E {self._evalue} -Z {Z} --tblout {result_file} {cm_db} {seq_fasta_file}"  # noqa: E501
-            logger.info(f"$ {cmd}")
-            cmd_args = shlex.split(cmd)
-            cmd_res = sp.run(cmd_args, capture_output=True, text=True)
+        seq_num = len(self._seq_records)
+        n = self._threads if seq_num >= self._threads else seq_num
 
-            if cmd_res.returncode == 0:
-                return ModelRecord.parse_from_cmscan_table(result_file)
-            else:
-                logger.error("Failed to run command below!!")
-                logger.error(f"$ {cmd}")
-                stdout_lines = cmd_res.stdout.splitlines()
-                if len(stdout_lines) > 0:
-                    logger.error("STDOUT:")
-                    for line in stdout_lines:
-                        logger.error(line)
-                stderr_lines = cmd_res.stderr.splitlines()
-                if len(stderr_lines) > 0:
-                    logger.error("STDERR:")
-                    for line in stderr_lines:
-                        logger.error(line)
-                raise RuntimeError("Failed to run cmscan.")
+        worker_args = []
+        split_seq_records = array_split(self._seq_records, n)
+        for worker_seq_records in split_seq_records:
+            worker_args.append([worker_seq_records, self._evalue, cm_db, logger])
+
+        with mp.Pool(n) as pool:
+            results = pool.starmap(_cmscan_worker, worker_args)
+        return list(itertools.chain.from_iterable(results))
+
+
+def _nhmmer_worker(
+    block: DigitalSequenceBlock,
+    evalue: float,
+    hmms: HMM,
+) -> list[ModelRecord]:
+    """pyhmmer.nhmmer worker for multiprocessing"""
+    mdl_records: list[ModelRecord] = []
+    opts = dict(cpus=1, E=evalue, window_length=MAXLEN)
+    for hits in nhmmer(hmms, block, **opts):  # type: ignore
+        for hit in hits.reported:
+            mdl_records.append(ModelRecord.from_hit(hit))
+    return mdl_records
+
+
+def _cmscan_worker(
+    seq_records: list[SeqRecord],
+    evalue: float,
+    cm_db: Path,
+    logger: logging.Logger,
+) -> list[ModelRecord]:
+    """cmscan worker for multiprocessing"""
+    with TemporaryDirectory() as tmpdir:
+        tmpdir = Path(tmpdir)
+        # Write tmp seq file
+        seq_fasta_file = tmpdir / "seq.fna"
+        SeqIO.write(seq_records, seq_fasta_file, format="fasta")
+        # Run cmscan
+        result_file = tmpdir / "result.tblout"
+        total_seq_len = sum([len(rec.seq) for rec in seq_records])
+        Z = 2 * total_seq_len / 1000000
+        cmd = f"cmscan --rfam --nohmmonly --noali --oskip --fmt 2 --cpu 1 -E {evalue} -Z {Z} --tblout {result_file} {cm_db} {seq_fasta_file}"  # noqa: E501
+        logger.info(f"$ {cmd}")
+        cmd_args = shlex.split(cmd)
+        cmd_res = sp.run(cmd_args, capture_output=True, text=True)
+
+        if cmd_res.returncode == 0:
+            return ModelRecord.parse_from_cmscan_table(result_file)
+        else:
+            logger.error("Failed to run command below!!")
+            logger.error(f"$ {cmd}")
+            stdout_lines = cmd_res.stdout.splitlines()
+            if len(stdout_lines) > 0:
+                logger.error("STDOUT:")
+                for line in stdout_lines:
+                    logger.error(line)
+            stderr_lines = cmd_res.stderr.splitlines()
+            if len(stderr_lines) > 0:
+                logger.error("STDERR:")
+                for line in stderr_lines:
+                    logger.error(line)
+            raise RuntimeError("Failed to run cmscan.")

@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import math
 import re
 import shutil
 import subprocess as sp
 from pathlib import Path
+from typing import TypeVar
 
 
 def load_example_fasta_file(filename: str) -> Path:
@@ -35,6 +37,31 @@ def load_example_fasta_file(filename: str) -> Path:
         err_msg = f"{filename=} is not found.\n"
         err_msg += f"Available filenames = {fasta_filenames}"
         raise FileNotFoundError(err_msg)
+
+
+T = TypeVar("T")
+
+
+def array_split(
+    ary: list[T],
+    n: int,
+) -> list[list[T]]:
+    """Split array into multiple sub arrays
+
+    Parameters
+    ----------
+    ary : list[T]
+        Array
+    n : int
+        Split num
+
+    Returns
+    -------
+    split_ary : list[list[T]]
+        Split array
+    """
+    size = math.ceil(len(ary) / n)
+    return [ary[idx : idx + size] for idx in range(0, len(ary), size)]
 
 
 def is_cmscan_installed() -> bool:
