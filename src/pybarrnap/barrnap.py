@@ -63,7 +63,8 @@ class Barrnap:
         threads : int, optional
             Number of threads
         kingdom : str, optional
-            Target kingdom (`bac`|`arc`|`euk`)
+            Target kingdom (`bac`|`arc`|`euk`|`all`)
+            kingdom=`all` is available only when set with `accurate=True`
         accurate : bool, optional
             If True, use cmscan(infernal) instead of pyhmmer.nhmmer.
             cmscan installation is required to enable this option.
@@ -100,6 +101,8 @@ class Barrnap:
 
         if kingdom not in KINGDOMS:
             raise ValueError(f"{kingdom=} is invalid ({KINGDOMS}).")
+        if kingdom == "all" and not accurate:
+            raise ValueError("kingdom='all' must be set with accurate=True")
         self._kingdom = kingdom
 
     def run(self) -> BarrnapResult:

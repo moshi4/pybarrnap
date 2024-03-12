@@ -51,7 +51,8 @@ def run(
     threads : int, optional
         Number of threads
     kingdom : str, optional
-        Target kingdom (`bac`|`arc`|`euk`)
+        Target kingdom (`bac`|`arc`|`euk`|`all`)
+        kingdom=`all` is available only when set with `accurate=True`
     outseq : str | Path | None, optional
         Output rRNA hit seqs as fasta file
     incseq : bool, optional
@@ -88,9 +89,9 @@ def run(
     except KeyboardInterrupt:
         logger.error("Interrupted")
         sys.exit(-signal.SIGINT)
-    except Exception as err:
-        logger.error(f"Error: {err}")
-        sys.exit(getattr(err, "errno", 1))
+    except Exception as e:
+        logger.error(e)
+        sys.exit(getattr(e, "errno", 1))
 
     # Write rRNA fasta
     if outseq:
@@ -126,6 +127,7 @@ def get_args() -> argparse.Namespace:
         usage="pybarrnap [options] genome.fna[.gz] > genome_rrna.gff",
         add_help=False,
         allow_abbrev=False,
+        formatter_class=argparse.RawTextHelpFormatter,
     )
 
     parser.add_argument(
@@ -178,7 +180,8 @@ def get_args() -> argparse.Namespace:
         "-k",
         "--kingdom",
         type=str,
-        help=f"Target kingdom [bac|arc|euk] (default: '{default_kingdom}')",
+        help=f"Target kingdom [bac|arc|euk|all] (default: '{default_kingdom}')\n"
+        "kingdom='all' is available only when set with `--accurate` option",
         default=default_kingdom,
         choices=KINGDOMS,
         metavar="",
@@ -245,6 +248,9 @@ def get_args() -> argparse.Namespace:
         max_threads = 1
     if not 1 <= threads <= max_threads:
         parser.error(f"--threads must be '1 <= value <= {max_threads}' ({threads=})")
+    # Check kingdom='all' is set with '--accurate' option
+    if args.kingdom == "all" and not args.accurate:
+        parser.error("kingdom='all' must be set with '--accurate' option.")
 
     # If input fasta is not seekable (not file) and waiting for stdin,
     # print help and exit

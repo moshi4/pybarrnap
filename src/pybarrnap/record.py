@@ -31,6 +31,18 @@ class ModelRecord:
     bias: float
     description: str
 
+    def __post_init__(self):
+        query_name_convert_dict = dict(
+            SSU_rRNA_bacteria="16S_rRNA",
+            LSU_rRNA_bacteria="23S_rRNA",
+            SSU_rRNA_archaea="16S_rRNA",
+            LSU_rRNA_archaea="23S_rRNA",
+            SSU_rRNA_eukarya="18S_rRNA",
+            LSU_rRNA_eukarya="28S_rRNA",
+        )
+        if self.query_name in query_name_convert_dict:
+            self.query_name = query_name_convert_dict[self.query_name]
+
     @property
     def start(self) -> int:
         """Start position"""
