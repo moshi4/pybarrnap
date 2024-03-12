@@ -67,7 +67,7 @@ class BarrnapResult:
                 end = int(feature.location.end)  # type: ignore
                 strand = "-" if feature.location.strand == -1 else "+"
                 seq = str(feature.extract(str(seq_rec.seq)))
-                name = str(feature.qualifiers.get("Name", [None])[0])
+                name = str(feature.qualifiers.get("gene", [None])[0])
                 desc = f"{name}::{seq_rec.name}:{start}-{end}({strand})"
                 rrna_seq_records.append(SeqRecord(Seq(seq), id=desc, description=desc))
         return rrna_seq_records

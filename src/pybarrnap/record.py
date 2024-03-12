@@ -63,6 +63,11 @@ class ModelRecord:
         """product"""
         return self.query_name.replace("_r", " ribosomal ").replace("5_8", "5.8")
 
+    @property
+    def rfam_acc_dbxref(self) -> str:
+        """Rfam accession dbxref"""
+        return f"RFAM:{self.query_acc}"
+
     @staticmethod
     def from_hit(hit: Hit) -> ModelRecord:
         """Create a new record from a PyHMMER ``Hit``"""
@@ -138,12 +143,15 @@ class ModelRecord:
         gff_line : str
             GFF line
         """
+        attrs = f"Name={self.query_name};"
         if self.is_partial(lencutoff):
-            tags = f"Name={self.query_name};product={self.product} (partial)"
+            attrs += f"product={self.product} (partial);"
+            attrs += f"Dbxref={self.rfam_acc_dbxref};"
             perc = self.length / SEQTYPE2LEN[self.query_name] * 100
-            tags += f";note=aligned only {perc:.2f} percent of the {self.product}"
+            attrs += f"Note=aligned only {perc:.2f} percent of the {self.product}"
         else:
-            tags = f"Name={self.query_name};product={self.product}"
+            attrs += f"product={self.product};"
+            attrs += f"Dbxref={self.rfam_acc_dbxref}"
 
         return "\t".join(
             (
@@ -155,7 +163,7 @@ class ModelRecord:
                 "0" if self.evalue == 0 else f"{self.evalue:.1e}",
                 self.strand,
                 ".",
-                tags,
+                attrs,
             )
         )
 
@@ -176,12 +184,17 @@ class ModelRecord:
         if self.is_partial(lencutoff):
             perc = self.length / SEQTYPE2LEN[self.query_name] * 100
             qualifiers = dict(
-                Name=[self.query_name],
+                gene=[self.query_name],
                 product=[f"{self.product} (partial)"],
+                db_xref=[self.rfam_acc_dbxref],
                 note=[f"aligned only {perc:.2f} percent of the {self.product}"],
             )
         else:
-            qualifiers = dict(Name=[self.query_name], product=[self.product])
+            qualifiers = dict(
+                gene=[self.query_name],
+                product=[self.product],
+                db_xref=[self.rfam_acc_dbxref],
+            )
 
         # 1-based start is converted to 0-based
         return SeqFeature(
