@@ -8,7 +8,6 @@ import shlex
 import subprocess as sp
 import sys
 import textwrap
-from copy import deepcopy
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -172,7 +171,7 @@ class Barrnap:
 
         return BarrnapResult(
             filtered_mdl_records,
-            deepcopy(self._seq_records),
+            self._seq_records,
             self._kingdom,
             self._evalue,
             self._lencutoff,

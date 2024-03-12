@@ -36,6 +36,7 @@ class BarrnapResult:
         self.mdl_records = sorted_all_mdl_records
         # Add features to SeqRecord
         for seq_rec in self.seq_records:
+            seq_rec.features = []
             mdl_records = name2mdl_records[seq_rec.name]
             for mdl_rec in mdl_records:
                 seq_rec.features.append(mdl_rec.to_feature(self.lencutoff))
