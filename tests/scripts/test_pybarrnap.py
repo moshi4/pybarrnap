@@ -45,7 +45,20 @@ def test_cli_with_accurate_option(tmp_path: Path):
     rrna_outfile = tmp_path / "rrna.fna"
 
     cmd = f"pybarrnap {fasta_file} --accurate -o {rrna_outfile} -i"
-    result = sp.run(cmd, shell=True, capture_output=True)
+    result = sp.run(cmd, shell=True)
+
+    assert result.returncode == 0
+    assert rrna_outfile.exists()
+
+
+@skipif_cmscan_not_installed
+def test_cli_with_accurate_all_option(tmp_path: Path):
+    """Test cli with accurate all option"""
+    fasta_file = load_example_fasta_file("minimum.fna")
+    rrna_outfile = tmp_path / "rrna.fna"
+
+    cmd = f"pybarrnap {fasta_file} -k all --accurate -o {rrna_outfile} -i"
+    result = sp.run(cmd, shell=True)
 
     assert result.returncode == 0
     assert rrna_outfile.exists()
@@ -68,6 +81,10 @@ def test_cli_with_invalid_option_value():
     assert result.returncode == 2
     # Invalid threads (expected '1 <= v <= max_threads')
     cmd = f"pybarrnap {fasta_file} --threads -1"
+    result = sp.run(cmd, shell=True)
+    assert result.returncode == 2
+    # Kingdom='all' is not set with '--accurate' option
+    cmd = f"pybarrnap {fasta_file} --kingdom all"
     result = sp.run(cmd, shell=True)
     assert result.returncode == 2
 
