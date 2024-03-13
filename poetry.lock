@@ -162,13 +162,13 @@ files = [
 
 [[package]]
 name = "comm"
-version = "0.2.1"
+version = "0.2.2"
 description = "Jupyter Python Comm implementation, for usage in ipykernel, xeus-python etc."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "comm-0.2.1-py3-none-any.whl", hash = "sha256:87928485c0dfc0e7976fd89fc1e187023cf587e7c353e4a9b417555b44adf021"},
-    {file = "comm-0.2.1.tar.gz", hash = "sha256:0bc91edae1344d39d3661dcbc36937181fdaddb304790458f8b044dbc064b89a"},
+    {file = "comm-0.2.2-py3-none-any.whl", hash = "sha256:e6fb86cb70ff661ee8c9c14e7d36d6de3b4066f1441be4063df9c5009f0a64d3"},
+    {file = "comm-0.2.2.tar.gz", hash = "sha256:3fd7a84065306e07bea1773df6eb8282de51ba82f77c72f9c85716ab11fe980e"},
 ]
 
 [package.dependencies]
@@ -478,13 +478,13 @@ testing = ["Django", "attrs", "colorama", "docopt", "pytest (<7.0.0)"]
 
 [[package]]
 name = "jupyter-client"
-version = "8.6.0"
+version = "8.6.1"
 description = "Jupyter protocol implementation and client libraries"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "jupyter_client-8.6.0-py3-none-any.whl", hash = "sha256:909c474dbe62582ae62b758bca86d6518c85234bdee2d908c778db6d72f39d99"},
-    {file = "jupyter_client-8.6.0.tar.gz", hash = "sha256:0642244bb83b4764ae60d07e010e15f0e2d275ec4e918a8f7b80fbbef3ca60c7"},
+    {file = "jupyter_client-8.6.1-py3-none-any.whl", hash = "sha256:3b7bd22f058434e3b9a7ea4b1500ed47de2713872288c0d511d19926f99b459f"},
+    {file = "jupyter_client-8.6.1.tar.gz", hash = "sha256:e842515e2bab8e19186d89fdfea7abd15e39dd581f94e399f00e2af5a1652d3f"},
 ]
 
 [package.dependencies]
@@ -501,13 +501,13 @@ test = ["coverage", "ipykernel (>=6.14)", "mypy", "paramiko", "pre-commit", "pyt
 
 [[package]]
 name = "jupyter-core"
-version = "5.7.1"
+version = "5.7.2"
 description = "Jupyter core package. A base package on which Jupyter projects rely."
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "jupyter_core-5.7.1-py3-none-any.whl", hash = "sha256:c65c82126453a723a2804aa52409930434598fd9d35091d63dfb919d2b765bb7"},
-    {file = "jupyter_core-5.7.1.tar.gz", hash = "sha256:de61a9d7fc71240f688b2fb5ab659fbb56979458dc66a71decd098e03c79e218"},
+    {file = "jupyter_core-5.7.2-py3-none-any.whl", hash = "sha256:4f7315d2f6b4bcf2e3e7cb6e46772eba760ae459cd1f59d29eb57b0a01bd7409"},
+    {file = "jupyter_core-5.7.2.tar.gz", hash = "sha256:aa5f8d32bbf6b431ac830496da7392035d6f61b4f54872f15c4bd2a9c3f536d9"},
 ]
 
 [package.dependencies]
@@ -517,7 +517,7 @@ traitlets = ">=5.3"
 
 [package.extras]
 docs = ["myst-parser", "pydata-sphinx-theme", "sphinx-autodoc-typehints", "sphinxcontrib-github-alt", "sphinxcontrib-spelling", "traitlets"]
-test = ["ipykernel", "pre-commit", "pytest", "pytest-cov", "pytest-timeout"]
+test = ["ipykernel", "pre-commit", "pytest (<8)", "pytest-cov", "pytest-timeout"]
 
 [[package]]
 name = "matplotlib-inline"
@@ -597,13 +597,13 @@ files = [
 
 [[package]]
 name = "packaging"
-version = "23.2"
+version = "24.0"
 description = "Core utilities for Python packages"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "packaging-23.2-py3-none-any.whl", hash = "sha256:8c491190033a9af7e1d931d0b5dacc2ef47509b34dd0de67ed209b5203fc88c7"},
-    {file = "packaging-23.2.tar.gz", hash = "sha256:048fb0e9405036518eaaf48a55953c750c11e1a1b68e0dd1a9d62ed0c092cfc5"},
+    {file = "packaging-24.0-py3-none-any.whl", hash = "sha256:2ddfb553fdf02fb784c234c7ba6ccc288296ceabec964ad2eae3777778130bc5"},
+    {file = "packaging-24.0.tar.gz", hash = "sha256:eb82c5e3e56209074766e6885bb04b8c38a0c015d0a30036ebe7ece34c9989e9"},
 ]
 
 [[package]]
@@ -789,50 +789,50 @@ windows-terminal = ["colorama (>=0.4.6)"]
 
 [[package]]
 name = "pyhmmer"
-version = "0.10.8"
+version = "0.10.9"
 description = "Cython bindings and Python interface to HMMER3."
 optional = false
 python-versions = ">=3.6"
 files = [
-    {file = "pyhmmer-0.10.8-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:94fd6d66a0e0e1e9950933a9de26b06f92b9facdf34eda5905720135df4ec27f"},
-    {file = "pyhmmer-0.10.8-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:d3e1d5ea6989470e4ef402afa07a35b36248ff85ab78069c6ac9ba318d7f2ff9"},
-    {file = "pyhmmer-0.10.8-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d98c1949baa0d201b4d83332e3d7995145e3469e819423301fad6f2db0b6ed17"},
-    {file = "pyhmmer-0.10.8-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:816bc0c1d0bf1e9cbedf5725ac5bb32cdfddb1a805df75774891c94fa67d5d55"},
-    {file = "pyhmmer-0.10.8-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:04c110d8d7d1fa21f382788619c8b2f87c58fea0fbb9775e4dc496e83dedf96e"},
-    {file = "pyhmmer-0.10.8-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:7c8a287c1449aac0949e1608629a6650826c1755a24250721fc4f68f98266edf"},
-    {file = "pyhmmer-0.10.8-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:333f1714790a348d215b0cbde5e5e564642fbc0645bff50f8a7f2449cd9f5f00"},
-    {file = "pyhmmer-0.10.8-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a6b96c781720b77a40e812f2655f7c97754038edc069dd146eb3b96b86d7c9f5"},
-    {file = "pyhmmer-0.10.8-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:72c02d09bb2b96a967be22f44177efcf4f1c8613fa5bbca7be75284f1ef8de2f"},
-    {file = "pyhmmer-0.10.8-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:6b49f4a56812c16eda015eba2fd441c3b30d9580775dcc7788355198b2469c82"},
-    {file = "pyhmmer-0.10.8-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:6623c7a477b7cd312a7dbb9450538535cdf3ede8a9ba5675f37139171a1e3828"},
-    {file = "pyhmmer-0.10.8-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:86752c88cb777ec18f26eb32abc42403f50f926a337a9f28189db6195c084120"},
-    {file = "pyhmmer-0.10.8-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:404b6479f0034ebef9f855c76a7ea21d8ec5ea499065c0938fe1629a0a244f3c"},
-    {file = "pyhmmer-0.10.8-cp36-cp36m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4e236c9293091bee5736213c7339778cd0bab0e4518c6966f009b998b957601c"},
-    {file = "pyhmmer-0.10.8-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a3c41649a2469cabbfdf9ead96094aff0a62b76faaa6cfbde467bcff9e452da3"},
-    {file = "pyhmmer-0.10.8-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:0516d547ce05730f8681925574f2b113a5bd6f1c8f89c908fa4af3ae0defc8a5"},
-    {file = "pyhmmer-0.10.8-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4f8cdd06c088e6b027efa71f73c3ce1542539b48e72c49424236a05ed297a276"},
-    {file = "pyhmmer-0.10.8-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:fe9fd82848c5c3aa7c22f3d0198feb5488b74455b3511b6d575b006c4a2cc22a"},
-    {file = "pyhmmer-0.10.8-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:364e460a8e1625f67789d97d9c2def5713d11529553c74dd996a7850438586c1"},
-    {file = "pyhmmer-0.10.8-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:b42d3586a0a853ee5002070687415df5fbaa3b72689e4a162bdc1874eef6b0b4"},
-    {file = "pyhmmer-0.10.8-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a16bbccbf8a9e861c982081fb7c7bfc084c0a9163564327056ce49e4efda09e1"},
-    {file = "pyhmmer-0.10.8-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a68ebdaa79b18e4484a8b6793459088f48bc603cd2d4aa66fffc388c5f954ad9"},
-    {file = "pyhmmer-0.10.8-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:e39e9c6ef114c50e6fe4b760fd217f6cb44fa2b479d7762f4d3725031b6e887a"},
-    {file = "pyhmmer-0.10.8-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:21581f53e999dee6f0aa33b28e102be3bc38e717b728e2cd655e2fe752f45dd0"},
-    {file = "pyhmmer-0.10.8-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:35fa541ee3bcac2bf847794beb2554afbc5472f94c35d3e86f7d2c4ff5b3dd70"},
-    {file = "pyhmmer-0.10.8-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ba6beefd66883bef80b91c518f14c01df28dcdf1c73fd1d8e1c83855f860e09a"},
-    {file = "pyhmmer-0.10.8-pp310-pypy310_pp73-macosx_10_9_x86_64.whl", hash = "sha256:00a9daf563c130f9f6df23fe70d7c0d294daf341427c182da531216fe3d8d8ef"},
-    {file = "pyhmmer-0.10.8-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:83a93d71fab2fb04a655f3205a1eab8130aca68937a8c609b9d57e33b2fbce7a"},
-    {file = "pyhmmer-0.10.8-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:788c38f93fa28095204646a776045a9c72595f3aa401fd2dea1b8f0b0b0b525e"},
-    {file = "pyhmmer-0.10.8-pp37-pypy37_pp73-macosx_10_9_x86_64.whl", hash = "sha256:47346d2f95d2406d2c1fc766c2664ab65a9642b4f0c924b012c03dce4fd894cf"},
-    {file = "pyhmmer-0.10.8-pp37-pypy37_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:9cf44bc56cf4e347a67463388e48f31721e77d5c2916a90b62f2e64022c0cd80"},
-    {file = "pyhmmer-0.10.8-pp37-pypy37_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:eddf16a362dd97e84fbd18d65e17776bc3aa28601dde3809b5fb8776502361c6"},
-    {file = "pyhmmer-0.10.8-pp38-pypy38_pp73-macosx_10_9_x86_64.whl", hash = "sha256:afcff4f92667ec5c4c58ed239f4120a9788b9e50cc664e5c73e9b71bb9776450"},
-    {file = "pyhmmer-0.10.8-pp38-pypy38_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:21c50beaa0fe25b0c79573b425f1f29e52c8dd0416c129750057f8ca48c4fef0"},
-    {file = "pyhmmer-0.10.8-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1536f75db04daa2f6542053c0adad82a2855ddaa7bac0f99c664a9bea11bfed8"},
-    {file = "pyhmmer-0.10.8-pp39-pypy39_pp73-macosx_10_9_x86_64.whl", hash = "sha256:712d8c3a7b9cfc6ffff26deaa01dc1d873cecfc38b18819eba9570f67ed9040d"},
-    {file = "pyhmmer-0.10.8-pp39-pypy39_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:de89f3078726f74558b22e718c5d0cff5621ebd8e4d23cf63e4aeb5d58fbb83f"},
-    {file = "pyhmmer-0.10.8-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:209ba669908e9785afb137647a1861ce35145f00cc2bf0d91d476185465a426c"},
-    {file = "pyhmmer-0.10.8.tar.gz", hash = "sha256:b9360a2a97705bbcf4bdf5797241193e0cd81aa384a5d2b2ff5be5b5135c9632"},
+    {file = "pyhmmer-0.10.9-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:6379ce91a7091c1a86fbc096b82ff014e34b168eec2c1330a56739450d70ff2b"},
+    {file = "pyhmmer-0.10.9-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:795f60deba97445259219ba0d0d93440ad5b44ec1dae1ba51a81ffa3f5a142ef"},
+    {file = "pyhmmer-0.10.9-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:946c8ddef755c92060fe085e8f941007b75d030be9e0ebcbf9b2becbe2801047"},
+    {file = "pyhmmer-0.10.9-cp310-cp310-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e98ce95087c9f0a31175157d3a4476cbc8b178be037c6ae1a0f63e083a30fc4f"},
+    {file = "pyhmmer-0.10.9-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:e7dcfb1b7a73ee9ded5f209768538c37329e39907eb87d9ef2fd8c7e78c93435"},
+    {file = "pyhmmer-0.10.9-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:e9dcb9605bf4f320de0d43e4664f6af7cf42dc82ee6385cb4a2f37b11cd8e4c0"},
+    {file = "pyhmmer-0.10.9-cp311-cp311-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:81b5e8d8384f20405b96dda2009c4dbadd83481ec5e14a343716953b060dbcdf"},
+    {file = "pyhmmer-0.10.9-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b24e4f1c4bca4f87988e60f912a40864bdb739ad5cf91ad12bbff263dd417ede"},
+    {file = "pyhmmer-0.10.9-cp312-cp312-macosx_10_9_x86_64.whl", hash = "sha256:49de17816c7582a8d4cfbf20695d51b9f7d07622d8b50e04fd0178819cddb10e"},
+    {file = "pyhmmer-0.10.9-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:9b8a96a06e94fd82509fc654bd60a7f1d4c64a15dd59238430aa6a54ae679982"},
+    {file = "pyhmmer-0.10.9-cp312-cp312-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:cce230792d880860b6ada346ebede3cd14f75f965008be52b6254518155bcbb4"},
+    {file = "pyhmmer-0.10.9-cp312-cp312-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a4ef258670b7f454114802873855846380381e32b506f2fc82e7c6bdf1cca675"},
+    {file = "pyhmmer-0.10.9-cp36-cp36m-macosx_10_9_x86_64.whl", hash = "sha256:c5118bb406e9f18d17f656b3c526bf99f9a24e8f99ab07d06881aaf8e2bd140f"},
+    {file = "pyhmmer-0.10.9-cp36-cp36m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:a2e43ac5406ca280c47ed7aa32086fc72dd2ea25ed7ca8f8302dd583a8736726"},
+    {file = "pyhmmer-0.10.9-cp36-cp36m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b0404b8520a5d87b1ef7f7a8878a459f5d3a4951dcee96f13cd97973a78289f3"},
+    {file = "pyhmmer-0.10.9-cp37-cp37m-macosx_10_9_x86_64.whl", hash = "sha256:3952a06bd68e279b5194f77e743500ffdfe75e2a259b325649c201c45aba7318"},
+    {file = "pyhmmer-0.10.9-cp37-cp37m-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:f5ef8b304cb46fbda474169eb97fa5e4d0bd6c423c3b3505e9227a87d55a50c9"},
+    {file = "pyhmmer-0.10.9-cp37-cp37m-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:3f954beef4c45092fa0d7de1e72000e3a7de983168b091185cafe50927e17725"},
+    {file = "pyhmmer-0.10.9-cp38-cp38-macosx_10_9_x86_64.whl", hash = "sha256:6a8879e58b8b97a68ccada551bd9b1e4e2630d20a4df953308fbeef0ec939b5a"},
+    {file = "pyhmmer-0.10.9-cp38-cp38-macosx_11_0_arm64.whl", hash = "sha256:d7dc73d84836aaf76f16e718da8e17da9ec803ebd5250c781ed2896d1ba63d3a"},
+    {file = "pyhmmer-0.10.9-cp38-cp38-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:23bf7d05d3765be53772ed29b07680ab3ddd96853c0a810f1b033ee6969eb2b5"},
+    {file = "pyhmmer-0.10.9-cp38-cp38-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:a4423fe0228ba1350e881c827e47db17c9552c574008d8226f4edbc60706969b"},
+    {file = "pyhmmer-0.10.9-cp39-cp39-macosx_10_9_x86_64.whl", hash = "sha256:63a865699c138517fd7a7e226babde6857611372400790f9c9af13d32ee54b31"},
+    {file = "pyhmmer-0.10.9-cp39-cp39-macosx_11_0_arm64.whl", hash = "sha256:67be5cfc16dddc46e43b58d685ea14306015bbdb9d9d8cb72eb385d9a2086fb0"},
+    {file = "pyhmmer-0.10.9-cp39-cp39-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:3537235b745ab08b68604ff92687cc4d88efa316f5cff5e60b97e5539edfadb3"},
+    {file = "pyhmmer-0.10.9-cp39-cp39-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:b3c2f2f4d6b280410de7e62044d1413b43f8290b605ace9a453539e506a7a383"},
+    {file = "pyhmmer-0.10.9-pp310-pypy310_pp73-macosx_10_9_x86_64.whl", hash = "sha256:e09a2dedb290788ceabe531105f933fc159e83408ee4e55c23c1abc1a6ac75de"},
+    {file = "pyhmmer-0.10.9-pp310-pypy310_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:4fdbd8131459d63a5939c8eb70f69293010f2e967b3c2f1a1a8bb8f9f4fbbef1"},
+    {file = "pyhmmer-0.10.9-pp310-pypy310_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:1091ebd5b4081b0eca5583e1050fe8f1266a7798f46d88c851aaa921bc018007"},
+    {file = "pyhmmer-0.10.9-pp37-pypy37_pp73-macosx_10_9_x86_64.whl", hash = "sha256:ddad1dae97a47d46d97050de9ac779d5267e708fda9537ad46bef9ee7af6c47c"},
+    {file = "pyhmmer-0.10.9-pp37-pypy37_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:ea8449fda30a2d46bee3be6ac53cc84825482d9c791a86d7684421c7e3cfad63"},
+    {file = "pyhmmer-0.10.9-pp37-pypy37_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:ff940cf5d753f4ff8484934ce40fc997cb9a8a94945b6b9cc8da367894c387c3"},
+    {file = "pyhmmer-0.10.9-pp38-pypy38_pp73-macosx_10_9_x86_64.whl", hash = "sha256:fe9a7a06fde801300b9232d0a2caf9ac23e967221530d1f4d3726d425e25debf"},
+    {file = "pyhmmer-0.10.9-pp38-pypy38_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d26d06adb72920f17d4912cdc826d7ff1b9fcc5cc4de98a10aef99b8f0a1f2d6"},
+    {file = "pyhmmer-0.10.9-pp38-pypy38_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:385f384d4be24f8478e46bb357ad54fd4e0fcd7ea952057aad45e3532f713f16"},
+    {file = "pyhmmer-0.10.9-pp39-pypy39_pp73-macosx_10_9_x86_64.whl", hash = "sha256:e70132bbc7d8ab88bcdd6948b313571f47b5e4e74f7026f0e5634b86cb41f5c3"},
+    {file = "pyhmmer-0.10.9-pp39-pypy39_pp73-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:d8848318174e80fee789e792157df110ea8c9cc33b3a313a0de7c90e2d57abe6"},
+    {file = "pyhmmer-0.10.9-pp39-pypy39_pp73-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:c72d65749613129775fd1f3e0a2273f9c3ff0ca069fb38e2208cebea9726a2f9"},
+    {file = "pyhmmer-0.10.9.tar.gz", hash = "sha256:c78c6f547fb3e37f537d7f87d543e4c61584e688023d0f004107c1df157d36c5"},
 ]
 
 [package.dependencies]
@@ -1107,18 +1107,18 @@ files = [
 
 [[package]]
 name = "setuptools"
-version = "69.1.1"
+version = "69.2.0"
 description = "Easily download, build, install, upgrade, and uninstall Python packages"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "setuptools-69.1.1-py3-none-any.whl", hash = "sha256:02fa291a0471b3a18b2b2481ed902af520c69e8ae0919c13da936542754b4c56"},
-    {file = "setuptools-69.1.1.tar.gz", hash = "sha256:5c0806c7d9af348e6dd3777b4f4dbb42c7ad85b190104837488eab9a7c945cf8"},
+    {file = "setuptools-69.2.0-py3-none-any.whl", hash = "sha256:c21c49fb1042386df081cb5d86759792ab89efca84cf114889191cd09aacc80c"},
+    {file = "setuptools-69.2.0.tar.gz", hash = "sha256:0ff4183f8f42cd8fa3acea16c45205521a4ef28f73c6391d8a25e92893134f2e"},
 ]
 
 [package.extras]
 docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "pygments-github-lexers (==0.0.5)", "rst.linker (>=1.9)", "sphinx (<7.2.5)", "sphinx (>=3.5)", "sphinx-favicon", "sphinx-inline-tabs", "sphinx-lint", "sphinx-notfound-page (>=1,<2)", "sphinx-reredirects", "sphinxcontrib-towncrier"]
-testing = ["build[virtualenv]", "filelock (>=3.4.0)", "flake8-2020", "ini2toml[lite] (>=0.9)", "jaraco.develop (>=7.21)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "packaging (>=23.2)", "pip (>=19.1)", "pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-home (>=0.5)", "pytest-mypy (>=0.9.1)", "pytest-perf", "pytest-ruff (>=0.2.1)", "pytest-timeout", "pytest-xdist", "tomli-w (>=1.0.0)", "virtualenv (>=13.0.0)", "wheel"]
+testing = ["build[virtualenv]", "filelock (>=3.4.0)", "importlib-metadata", "ini2toml[lite] (>=0.9)", "jaraco.develop (>=7.21)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "mypy (==1.9)", "packaging (>=23.2)", "pip (>=19.1)", "pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-home (>=0.5)", "pytest-mypy (>=0.9.1)", "pytest-perf", "pytest-ruff (>=0.2.1)", "pytest-timeout", "pytest-xdist (>=3)", "tomli", "tomli-w (>=1.0.0)", "virtualenv (>=13.0.0)", "wheel"]
 testing-integration = ["build[virtualenv] (>=1.0.3)", "filelock (>=3.4.0)", "jaraco.envs (>=2.2)", "jaraco.path (>=3.2.0)", "packaging (>=23.2)", "pytest", "pytest-enabler", "pytest-xdist", "tomli", "virtualenv (>=13.0.0)", "wheel"]
 
 [[package]]
@@ -1184,18 +1184,18 @@ files = [
 
 [[package]]
 name = "traitlets"
-version = "5.14.1"
+version = "5.14.2"
 description = "Traitlets Python configuration system"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "traitlets-5.14.1-py3-none-any.whl", hash = "sha256:2e5a030e6eff91737c643231bfcf04a65b0132078dad75e4936700b213652e74"},
-    {file = "traitlets-5.14.1.tar.gz", hash = "sha256:8585105b371a04b8316a43d5ce29c098575c2e477850b62b848b964f1444527e"},
+    {file = "traitlets-5.14.2-py3-none-any.whl", hash = "sha256:fcdf85684a772ddeba87db2f398ce00b40ff550d1528c03c14dbf6a02003cd80"},
+    {file = "traitlets-5.14.2.tar.gz", hash = "sha256:8cdd83c040dab7d1dee822678e5f5d100b514f7b72b01615b26fc5718916fdf9"},
 ]
 
 [package.extras]
 docs = ["myst-parser", "pydata-sphinx-theme", "sphinx"]
-test = ["argcomplete (>=3.0.3)", "mypy (>=1.7.0)", "pre-commit", "pytest (>=7.0,<7.5)", "pytest-mock", "pytest-mypy-testing"]
+test = ["argcomplete (>=3.0.3)", "mypy (>=1.7.0)", "pre-commit", "pytest (>=7.0,<8.1)", "pytest-mock", "pytest-mypy-testing"]
 
 [[package]]
 name = "typing-extensions"
@@ -1241,20 +1241,20 @@ files = [
 
 [[package]]
 name = "zipp"
-version = "3.17.0"
+version = "3.18.0"
 description = "Backport of pathlib-compatible object wrapper for zip files"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "zipp-3.17.0-py3-none-any.whl", hash = "sha256:0e923e726174922dce09c53c59ad483ff7bbb8e572e00c7f7c46b88556409f31"},
-    {file = "zipp-3.17.0.tar.gz", hash = "sha256:84e64a1c28cf7e91ed2078bb8cc8c259cb19b76942096c8d7b84947690cabaf0"},
+    {file = "zipp-3.18.0-py3-none-any.whl", hash = "sha256:c1bb803ed69d2cce2373152797064f7e79bc43f0a3748eb494096a867e0ebf79"},
+    {file = "zipp-3.18.0.tar.gz", hash = "sha256:df8d042b02765029a09b157efd8e820451045890acc30f8e37dd2f94a060221f"},
 ]
 
 [package.extras]
-docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (<7.2.5)", "sphinx (>=3.5)", "sphinx-lint"]
-testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy (>=0.9.1)", "pytest-ruff"]
+docs = ["furo", "jaraco.packaging (>=9.3)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
+testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=2.2)", "pytest-ignore-flaky", "pytest-mypy", "pytest-ruff (>=0.2.1)"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.8"
-content-hash = "45ad716e9d76d1f01f0a62d3766fa462c1c36de99b77aec0e6fdc40a8c9a964f"
+content-hash = "72f77f8572c71ec690d0e4ee7e06ae7de642e37915097667b76d89488e91618b"
