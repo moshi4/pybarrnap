@@ -110,6 +110,13 @@ def test_accurate_with_no_cmscan_installed_run_failed(monkeypatch):
         Barrnap(fasta_file, accurate=True).run()
 
 
+def test_kingdom_all_with_accurate_false_run_failed():
+    """Test kingdom=`all` with accurate=False (failed)"""
+    fasta_file = load_example_fasta_file("minimum.fna")
+    with pytest.raises(ValueError):
+        Barrnap(fasta_file, kingdom="all", accurate=False).run()
+
+
 @skipif_cmscan_not_installed
 def test_bacteria_accurate_run(tmp_path: Path):
     """Test pybarrnap accurate run for bacteria"""
@@ -135,10 +142,20 @@ def test_bacteria_accurate_run(tmp_path: Path):
 
 @skipif_cmscan_not_installed
 def test_archaea_accurate_run():
-    """Test pybarrnap run for archaea"""
+    """Test pybarrnap accurate run for archaea"""
     fasta_file = load_example_fasta_file("archaea.fna")
     barrnap = Barrnap(fasta_file, kingdom="arc", accurate=True)
     result = barrnap.run()
 
     expected_rrna_count = 6
+    assert len(result.get_rrna_seq_records()) == expected_rrna_count
+
+
+def test_accurate_all_run():
+    """Test pybarrnap accurate run for all kingdom"""
+    fasta_file = load_example_fasta_file("minimum.fna")
+    barrnap = Barrnap(fasta_file, kingdom="all", accurate=True)
+    result = barrnap.run()
+
+    expected_rrna_count = 3
     assert len(result.get_rrna_seq_records()) == expected_rrna_count

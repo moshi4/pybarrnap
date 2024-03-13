@@ -7,7 +7,7 @@ _db_path = Path(__file__).parent / "db"
 _hmm_db_path = _db_path / "hmm"
 _cm_db_path = _db_path / "cm"
 
-KINGDOMS = ["arc", "bac", "euk"]
+KINGDOMS = ["arc", "bac", "euk", "all"]  # 'all' is only cm database
 KINGDOM2HMM_DB = {k: _hmm_db_path / f"{k}.hmm" for k in KINGDOMS}
 KINGDOM2CM_DB = {k: _cm_db_path / f"{k}.cm" for k in KINGDOMS}
 

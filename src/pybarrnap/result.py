@@ -36,6 +36,7 @@ class BarrnapResult:
         self.mdl_records = sorted_all_mdl_records
         # Add features to SeqRecord
         for seq_rec in self.seq_records:
+            seq_rec.features = []
             mdl_records = name2mdl_records[seq_rec.name]
             for mdl_rec in mdl_records:
                 seq_rec.features.append(mdl_rec.to_feature(self.lencutoff))
@@ -66,7 +67,7 @@ class BarrnapResult:
                 end = int(feature.location.end)  # type: ignore
                 strand = "-" if feature.location.strand == -1 else "+"
                 seq = str(feature.extract(str(seq_rec.seq)))
-                name = str(feature.qualifiers.get("Name", [None])[0])
+                name = str(feature.qualifiers.get("gene", [None])[0])
                 desc = f"{name}::{seq_rec.name}:{start}-{end}({strand})"
                 rrna_seq_records.append(SeqRecord(Seq(seq), id=desc, description=desc))
         return rrna_seq_records

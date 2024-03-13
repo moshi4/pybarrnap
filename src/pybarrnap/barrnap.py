@@ -8,7 +8,6 @@ import shlex
 import subprocess as sp
 import sys
 import textwrap
-from copy import deepcopy
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
@@ -63,7 +62,8 @@ class Barrnap:
         threads : int, optional
             Number of threads
         kingdom : str, optional
-            Target kingdom (`bac`|`arc`|`euk`)
+            Target kingdom (`bac`|`arc`|`euk`|`all`)
+            kingdom=`all` is available only when set with `accurate=True`
         accurate : bool, optional
             If True, use cmscan(infernal) instead of pyhmmer.nhmmer.
             cmscan installation is required to enable this option.
@@ -100,6 +100,8 @@ class Barrnap:
 
         if kingdom not in KINGDOMS:
             raise ValueError(f"{kingdom=} is invalid ({KINGDOMS}).")
+        if kingdom == "all" and not accurate:
+            raise ValueError("kingdom='all' must be set with accurate=True")
         self._kingdom = kingdom
 
     def run(self) -> BarrnapResult:
@@ -169,7 +171,7 @@ class Barrnap:
 
         return BarrnapResult(
             filtered_mdl_records,
-            deepcopy(self._seq_records),
+            self._seq_records,
             self._kingdom,
             self._evalue,
             self._lencutoff,
@@ -178,30 +180,30 @@ class Barrnap:
 
     def _run_nhmmer(self, logger: logging.Logger) -> list[ModelRecord]:
         """Run pyhmmer.nhmmer (faster, lower accuracy for rRNA prediction)"""
-        # Convert SeqRecord to DigitalSequenceBlock
-        try:
-            alphabet = Alphabet.rna()
-            seqs = DigitalSequenceBlock(alphabet)
-            for rec in self._seq_records:
-                name, description = rec.name.encode(), rec.description.encode()
-                seq = TextSequence(name, description, sequence=str(rec.seq))
-                seqs.append(seq.digitize(alphabet))
-        except ValueError as e:
-            raise ValueError(
-                "Failed to convert nucleotide sequences, maybe input contains proteins?"
-            ) from e
-
         # Setup HMM database
         hmm_db = KINGDOM2HMM_DB[self._kingdom]
         with HMMFile(hmm_db) as hf:
             hmms = list(hf)
         logger.info(f"Use HMM DB: {hmm_db}")
 
+        try:
+            # Convert SeqRecord to DigitalSequenceBlock
+            alphabet = Alphabet.rna()
+            seq_block = DigitalSequenceBlock(alphabet)
+            for rec in self._seq_records:
+                name, description = rec.name.encode(), rec.description.encode()
+                seq = TextSequence(name, description, sequence=str(rec.seq))
+                seq_block.append(seq.digitize(alphabet))
+        except ValueError as e:
+            raise ValueError(
+                "Failed to convert nucleotide sequences, maybe input contains proteins?"
+            ) from e
+
         # Run pyhmmer.nhmmer
         logger.info("Running pyhmmer.nhmmer...")
         mdl_records: list[ModelRecord] = []
         opts = dict(cpus=self._threads, E=self._evalue, window_length=MAXLEN)
-        for hits in nhmmer(hmms, seqs, **opts):  # type: ignore
+        for hits in nhmmer(hmms, seq_block, **opts):  # type: ignore
             for hit in hits.reported:
                 mdl_records.append(ModelRecord.from_hit(hit))
         return mdl_records
@@ -223,13 +225,13 @@ class Barrnap:
             result_file = tmpdir / "result.tblout"
             total_seq_len = sum([len(rec.seq) for rec in self._seq_records])
             Z = 2 * total_seq_len / 1000000
-            cmd = f"cmscan --rfam --nohmmonly --noali --oskip --fmt 2 --cpu {self._threads} -E {self._evalue} -Z {Z} --tblout {result_file} {cm_db} {seq_fasta_file}"  # noqa: E501
+            cmd = f"cmscan --rfam --nohmmonly --noali --cut_ga --oskip --fmt 2 --cpu {self._threads} -Z {Z} --tblout {result_file} {cm_db} {seq_fasta_file}"  # noqa: E501
             logger.info(f"$ {cmd}")
             cmd_args = shlex.split(cmd)
             cmd_res = sp.run(cmd_args, capture_output=True, text=True)
 
             if cmd_res.returncode == 0:
-                return ModelRecord.parse_from_cmscan_table(result_file)
+                return ModelRecord.parse_from_cmscan_table(result_file, self._evalue)
             else:
                 logger.error("Failed to run command below!!")
                 logger.error(f"$ {cmd}")
