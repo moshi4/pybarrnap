@@ -10,8 +10,6 @@ from io import BufferedReader, TextIOWrapper
 from pathlib import Path
 from typing import Any
 
-from Bio.SeqRecord import SeqRecord
-
 import pybarrnap
 from pybarrnap import Barrnap
 from pybarrnap.config import KINGDOMS
@@ -25,7 +23,7 @@ def main():
 
 
 def run(
-    fasta: str | Path | TextIOWrapper | BufferedReader | SeqRecord | list[SeqRecord],
+    fasta: TextIOWrapper | BufferedReader,
     *,
     evalue: float = 1e-6,
     lencutoff: float = 0.8,
@@ -40,8 +38,8 @@ def run(
     """
     Parameters
     ----------
-    fasta : str | Path | TextIOWrapper | BufferedReader | SeqRecord | list[SeqRecord]
-        Fasta file (handle) or SeqRecord or list[SeqRecord]
+    fasta : TextIOWrapper | BufferedReader
+        Fasta stdin(TextIOWrapper) or file(BufferedReader)
     evalue : float, optional
         E-value cutoff
     lencutoff : float, optional
@@ -254,7 +252,7 @@ def get_args() -> argparse.Namespace:
 
     # If input fasta is not seekable (not file) and waiting for stdin,
     # print help and exit
-    fasta: BufferedReader = args.fasta
+    fasta: TextIOWrapper | BufferedReader = args.fasta
     if not fasta.seekable() and sys.stdin.isatty():
         parser.print_help()
         parser.exit(1)
