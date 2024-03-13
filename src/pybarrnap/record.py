@@ -99,7 +99,10 @@ class ModelRecord:
         )
 
     @staticmethod
-    def parse_from_cmscan_table(tbl_file: str | Path) -> list[ModelRecord]:
+    def parse_from_cmscan_table(
+        tbl_file: str | Path,
+        evalue_thr: float,
+    ) -> list[ModelRecord]:
         """Parse from cmscan result table (format=2)"""
         mdl_records = []
         with open(tbl_file) as f:
@@ -123,7 +126,8 @@ class ModelRecord:
                     bias=float(split_line[15]),
                     description=" ".join(split_line[26:]),
                 )
-                mdl_records.append(mdl_record)
+                if mdl_record.evalue <= evalue_thr:
+                    mdl_records.append(mdl_record)
         return mdl_records
 
     def is_partial(self, lencutoff: float = 0.8) -> bool:
