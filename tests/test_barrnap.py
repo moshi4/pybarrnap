@@ -151,6 +151,7 @@ def test_archaea_accurate_run():
     assert len(result.get_rrna_seq_records()) == expected_rrna_count
 
 
+@skipif_cmscan_not_installed
 def test_accurate_all_run():
     """Test pybarrnap accurate run for all kingdom"""
     fasta_file = load_example_fasta_file("minimum.fna")
