@@ -4,17 +4,17 @@
 # last locked with the following flags:
 #   pre: false
 #   features: []
-#   all-features: false
+#   all-features: true
 #   with-sources: false
 #   generate-hashes: false
 #   universal: false
 
 -e file:.
-biopython==1.83
+biopython==1.85
     # via pybarrnap
-numpy==1.24.4
+numpy==2.0.2
     # via biopython
-psutil==5.9.8
+psutil==6.1.1
     # via pyhmmer
-pyhmmer==0.10.14
+pyhmmer==0.11.0
     # via pybarrnap
