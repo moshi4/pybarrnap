@@ -71,11 +71,11 @@ class ModelRecord:
     @staticmethod
     def from_hit(hit: Hit) -> ModelRecord:
         """Create a new record from a PyHMMER ``Hit``"""
-        query_name = hit.hits.query_name.decode()
+        query_name = hit.hits.query.name.decode()
         query_acc = (
             "-"
-            if hit.hits.query_accession is None
-            else hit.hits.query_accession.decode()
+            if hit.hits.query.accession is None
+            else hit.hits.query.accession.decode()
         )
         dom = hit.best_domain
         ali = dom.alignment
