@@ -29,7 +29,7 @@ As an additional feature from barrnap, accurate mode is available by installing 
 
 ## Installation
 
-`Python 3.8 or later` is required for installation.
+`Python 3.9 or later` is required for installation.
 pybarrnap depends on [pyhmmer](https://github.com/althonos/pyhmmer) and [biopython](https://github.com/biopython/biopython) python library.
 If accurate mode is required, please install [infernal](http://eddylab.org/infernal/) additionally.
 
