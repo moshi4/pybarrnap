@@ -16,7 +16,7 @@ from pybarrnap.config import KINGDOMS
 from pybarrnap.logger import get_logger
 
 
-def main():
+def main() -> None:
     """Main function called from CLI"""
     args = get_args()
     run(**args.__dict__)
@@ -131,7 +131,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument(
         "fasta",
         nargs="?",
-        type=argparse.FileType("rb"),
+        type=argparse.FileType("rb"),  # type: ignore
         help="Input fasta file (or stdin)",
         default=sys.stdin,
     )

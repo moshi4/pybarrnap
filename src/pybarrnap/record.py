@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from Bio.SeqFeature import SeqFeature, SimpleLocation
-from pyhmmer.plan7 import Hit
 
 import pybarrnap
 from pybarrnap.config import SEQTYPE2LEN
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from pyhmmer.plan7 import Hit
 
 
 @dataclass
@@ -31,7 +35,7 @@ class ModelRecord:
     bias: float
     description: str
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         query_name_convert_dict = dict(
             SSU_rRNA_bacteria="16S_rRNA",
             LSU_rRNA_bacteria="23S_rRNA",
@@ -208,10 +212,10 @@ class ModelRecord:
             qualifiers=qualifiers,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         perc = self.length / SEQTYPE2LEN[self.query_name] * 100
         result = ""
         result += f"{self.query_name} {self.target_name} "
