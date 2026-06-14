@@ -195,7 +195,9 @@ class Barrnap:
             seq_block = DigitalSequenceBlock(alphabet)
             for rec in self._seq_records:
                 name, description = rec.name.encode(), rec.description.encode()
-                seq = TextSequence(name, description, sequence=str(rec.seq))
+                seq = TextSequence(
+                    name=name, description=description, sequence=str(rec.seq)
+                )
                 seq_block.append(seq.digitize(alphabet))
         except ValueError as e:
             raise ValueError(
