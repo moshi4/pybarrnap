@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 import pytest
 
@@ -8,8 +8,13 @@ from pybarrnap import Barrnap
 from pybarrnap.utils import load_example_fasta_file
 from tests.marker import skipif_cmscan_not_installed
 
+if TYPE_CHECKING:
+    from pathlib import Path
 
-def test_bacteria_run(tmp_path: Path):
+    from pytest import MonkeyPatch
+
+
+def test_bacteria_run(tmp_path: Path) -> None:
     """Test pybarrnap run for bacteria"""
     fasta_file = load_example_fasta_file("bacteria.fna")
     barrnap = Barrnap(fasta_file)
@@ -31,7 +36,7 @@ def test_bacteria_run(tmp_path: Path):
     assert rrna_fasta_file.exists()
 
 
-def test_archaea_run():
+def test_archaea_run() -> None:
     """Test pybarrnap run for archaea"""
     fasta_file = load_example_fasta_file("archaea.fna")
     barrnap = Barrnap(fasta_file, kingdom="arc")
@@ -41,7 +46,7 @@ def test_archaea_run():
     assert len(result.get_rrna_seq_records()) == expected_rrna_count
 
 
-def test_eukaryote_run():
+def test_eukaryote_run() -> None:
     """Test pybarrnap run for eukaryote (fungus)"""
     fasta_file = load_example_fasta_file("fungus.fna")
     barrnap = Barrnap(fasta_file, kingdom="euk")
@@ -51,7 +56,7 @@ def test_eukaryote_run():
     assert len(result.get_rrna_seq_records()) == expected_rrna_count
 
 
-def test_gzip_fasta_run():
+def test_gzip_fasta_run() -> None:
     """Test barrnap run for gzip fasta file"""
     gzip_fasta_file = load_example_fasta_file("minimum.fna.gz")
     barrnap = Barrnap(gzip_fasta_file)
@@ -61,28 +66,28 @@ def test_gzip_fasta_run():
     assert len(result.get_rrna_seq_records()) == expected_rrna_count
 
 
-def test_null_fasta_run_failed():
+def test_null_fasta_run_failed() -> None:
     """Test pybarrnap run for null fasta file (failed)"""
     null_fasta_file = load_example_fasta_file("null.fna")
     with pytest.raises(ValueError):
         Barrnap(null_fasta_file).run()
 
 
-def test_dupid_fasta_run_failed():
+def test_dupid_fasta_run_failed() -> None:
     """Test pybarrnap run for duplication id fasta file (failed)"""
     dupid_fasta_file = load_example_fasta_file("dupid.fna")
     with pytest.raises(ValueError):
         Barrnap(dupid_fasta_file).run()
 
 
-def test_protein_fasta_run_failed():
+def test_protein_fasta_run_failed() -> None:
     """Test pybarrnap run for protein fasta file (failed)"""
     protein_fasta_file = load_example_fasta_file("protein.fna")
     with pytest.raises(ValueError):
         Barrnap(protein_fasta_file).run()
 
 
-def test_empty_fasta_run():
+def test_empty_fasta_run() -> None:
     """Test pybarrnap run for empty (0 length) fasta file"""
     empty_fasta_file = load_example_fasta_file("empty.fna")
     barrnap = Barrnap(empty_fasta_file)
@@ -92,7 +97,7 @@ def test_empty_fasta_run():
     assert len(result.get_rrna_seq_records()) == expected_rrna_count
 
 
-def test_nohits_fasta_run():
+def test_nohits_fasta_run() -> None:
     """Test pybarrnap run for nohits fasta file"""
     nohits_fasta_file = load_example_fasta_file("nohits.fna")
     barrnap = Barrnap(nohits_fasta_file)
@@ -102,7 +107,7 @@ def test_nohits_fasta_run():
     assert len(result.get_rrna_seq_records()) == expected_rrna_count
 
 
-def test_accurate_with_no_cmscan_installed_run_failed(monkeypatch):
+def test_accurate_with_no_cmscan_installed_run_failed(monkeypatch: MonkeyPatch) -> None:
     """Test accurate option with no cmscan installed (failed)"""
     monkeypatch.setattr("pybarrnap.utils.is_cmscan_installed", lambda: False)
     fasta_file = load_example_fasta_file("minimum.fna")
@@ -110,7 +115,7 @@ def test_accurate_with_no_cmscan_installed_run_failed(monkeypatch):
         Barrnap(fasta_file, accurate=True).run()
 
 
-def test_kingdom_all_with_accurate_false_run_failed():
+def test_kingdom_all_with_accurate_false_run_failed() -> None:
     """Test kingdom=`all` with accurate=False (failed)"""
     fasta_file = load_example_fasta_file("minimum.fna")
     with pytest.raises(ValueError):
@@ -118,7 +123,7 @@ def test_kingdom_all_with_accurate_false_run_failed():
 
 
 @skipif_cmscan_not_installed
-def test_bacteria_accurate_run(tmp_path: Path):
+def test_bacteria_accurate_run(tmp_path: Path) -> None:
     """Test pybarrnap accurate run for bacteria"""
     fasta_file = load_example_fasta_file("bacteria.fna")
     barrnap = Barrnap(fasta_file, accurate=True)
@@ -141,7 +146,7 @@ def test_bacteria_accurate_run(tmp_path: Path):
 
 
 @skipif_cmscan_not_installed
-def test_archaea_accurate_run():
+def test_archaea_accurate_run() -> None:
     """Test pybarrnap accurate run for archaea"""
     fasta_file = load_example_fasta_file("archaea.fna")
     barrnap = Barrnap(fasta_file, kingdom="arc", accurate=True)
@@ -152,7 +157,7 @@ def test_archaea_accurate_run():
 
 
 @skipif_cmscan_not_installed
-def test_accurate_all_run():
+def test_accurate_all_run() -> None:
     """Test pybarrnap accurate run for all kingdom"""
     fasta_file = load_example_fasta_file("minimum.fna")
     barrnap = Barrnap(fasta_file, kingdom="all", accurate=True)

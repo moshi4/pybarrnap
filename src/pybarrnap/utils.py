@@ -39,7 +39,7 @@ def load_example_fasta_file(filename: str) -> Path:
 
 def is_cmscan_installed() -> bool:
     """Check cmscan is installed or not"""
-    return True if shutil.which("cmscan") else False
+    return bool(shutil.which("cmscan"))
 
 
 def get_cmscan_version() -> str:
@@ -48,11 +48,11 @@ def get_cmscan_version() -> str:
         raise RuntimeError("cmscan is not installed!!")
     version_unknown = "X.X.X"
     try:
-        cmd_res = sp.run(["cmscan", "-h"], capture_output=True, text=True)
+        cmd_res = sp.run(["cmscan", "-h"], capture_output=True, text=True, check=True)
         if cmd_res.returncode == 0:
             pattern = r"# INFERNAL\s+(\d+\.\d+\.\d+)"
             match = re.search(pattern, cmd_res.stdout, flags=re.MULTILINE)
-            version = str(match.group(1))
+            version = str(match.group(1))  # type: ignore
             return version
         else:
             return version_unknown

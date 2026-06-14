@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import gzip
 import io
-import logging
 import platform
 import shlex
 import subprocess as sp
@@ -10,6 +9,7 @@ import sys
 import textwrap
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from typing import TYPE_CHECKING
 
 import Bio
 import pyhmmer
@@ -31,6 +31,9 @@ from pybarrnap.logger import get_logger
 from pybarrnap.record import ModelRecord
 from pybarrnap.result import BarrnapResult
 from pybarrnap.utils import get_cmscan_version, is_cmscan_installed
+
+if TYPE_CHECKING:
+    import logging
 
 
 class Barrnap:
@@ -192,7 +195,9 @@ class Barrnap:
             seq_block = DigitalSequenceBlock(alphabet)
             for rec in self._seq_records:
                 name, description = rec.name.encode(), rec.description.encode()
-                seq = TextSequence(name, description, sequence=str(rec.seq))
+                seq = TextSequence(
+                    name=name, description=description, sequence=str(rec.seq)
+                )
                 seq_block.append(seq.digitize(alphabet))
         except ValueError as e:
             raise ValueError(
@@ -223,12 +228,12 @@ class Barrnap:
             SeqIO.write(self._seq_records, seq_fasta_file, format="fasta")
             # Run cmscan
             result_file = tmpdir / "result.tblout"
-            total_seq_len = sum([len(rec.seq) for rec in self._seq_records])
+            total_seq_len = sum([len(rec.seq) for rec in self._seq_records])  # type: ignore
             Z = 2 * total_seq_len / 1000000
             cmd = f"cmscan --rfam --nohmmonly --noali --cut_ga --oskip --fmt 2 --cpu {self._threads} -Z {Z} --tblout {result_file} {cm_db} {seq_fasta_file}"  # noqa: E501
             logger.info(f"$ {cmd}")
             cmd_args = shlex.split(cmd)
-            cmd_res = sp.run(cmd_args, capture_output=True, text=True)
+            cmd_res = sp.run(cmd_args, capture_output=True, text=True, check=False)
 
             if cmd_res.returncode == 0:
                 return ModelRecord.parse_from_cmscan_table(result_file, self._evalue)

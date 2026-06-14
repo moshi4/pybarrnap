@@ -1,13 +1,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from Bio.SeqFeature import SeqFeature, SimpleLocation
-from pyhmmer.plan7 import Hit
 
 import pybarrnap
 from pybarrnap.config import SEQTYPE2LEN
+
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from pyhmmer.plan7 import Hit
 
 
 @dataclass
@@ -31,7 +35,7 @@ class ModelRecord:
     bias: float
     description: str
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         query_name_convert_dict = dict(
             SSU_rRNA_bacteria="16S_rRNA",
             LSU_rRNA_bacteria="23S_rRNA",
@@ -71,17 +75,15 @@ class ModelRecord:
     @staticmethod
     def from_hit(hit: Hit) -> ModelRecord:
         """Create a new record from a PyHMMER ``Hit``"""
-        query_name = hit.hits.query.name.decode()
+        query_name = hit.hits.query.name
         query_acc = (
-            "-"
-            if hit.hits.query.accession is None
-            else hit.hits.query.accession.decode()
+            "-" if hit.hits.query.accession is None else hit.hits.query.accession
         )
         dom = hit.best_domain
         ali = dom.alignment
-        target_name = hit.name.decode()
-        target_acc = "-" if hit.accession is None else hit.accession.decode()
-        desc = "-" if hit.description is None else hit.description.decode()
+        target_name = hit.name
+        target_acc = "-" if hit.accession is None else hit.accession
+        desc = "-" if hit.description is None else hit.description
         return ModelRecord(
             target_name=target_name,
             target_acc=target_acc,
@@ -208,10 +210,10 @@ class ModelRecord:
             qualifiers=qualifiers,
         )
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return str(self)
 
-    def __str__(self):
+    def __str__(self) -> str:
         perc = self.length / SEQTYPE2LEN[self.query_name] * 100
         result = ""
         result += f"{self.query_name} {self.target_name} "

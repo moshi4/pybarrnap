@@ -2,13 +2,16 @@ from __future__ import annotations
 
 from collections import defaultdict
 from dataclasses import dataclass
-from pathlib import Path
+from typing import TYPE_CHECKING
 
 from Bio import SeqIO
 from Bio.Seq import Seq
 from Bio.SeqRecord import SeqRecord
 
-from pybarrnap.record import ModelRecord
+if TYPE_CHECKING:
+    from pathlib import Path
+
+    from pybarrnap.record import ModelRecord
 
 
 @dataclass
@@ -22,7 +25,7 @@ class BarrnapResult:
     lencutoff: float
     reject: float
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         # Sort model records (1. fasta record order, 2. rRNA feature location order)
         name2mdl_records: dict[str, list[ModelRecord]] = defaultdict(list)
         for mdl_rec in self.mdl_records:
@@ -65,7 +68,7 @@ class BarrnapResult:
             for feature in seq_rec.features:
                 start = int(feature.location.start)  # type: ignore
                 end = int(feature.location.end)  # type: ignore
-                strand = "-" if feature.location.strand == -1 else "+"
+                strand = "-" if feature.location.strand == -1 else "+"  # type: ignore
                 seq = str(feature.extract(str(seq_rec.seq)))
                 name = str(feature.qualifiers.get("gene", [None])[0])
                 desc = f"{name}::{seq_rec.name}:{start}-{end}({strand})"
