@@ -10,7 +10,7 @@ classifiers = [
   "Intended Audience :: Science/Research",
   "Topic :: Scientific/Engineering :: Bio-Informatics",
 ]
-dependencies = ["biopython>=1.80", "pyhmmer>=0.11.0"]
+dependencies = ["biopython>=1.80", "pyhmmer>=0.12.1"]
 dynamic = ["version"]
 
 [project.urls]
