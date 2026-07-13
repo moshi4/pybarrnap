@@ -24,7 +24,7 @@ As an additional feature from barrnap, accurate mode is available by installing 
 
 > [!NOTE]
 > Barrnap v0.9 uses the HMM profile database created from older releases of Rfam and SILVA.
-> On the other hand, pybarrnap default mode uses the HMM profile database created from the Rfam(14.10).
+> On the other hand, pybarrnap default mode uses the HMM profile database created from the Rfam(15.1).
 > Therefore, there will be some differences in results between Barrnap v0.9 and pybarrnap default mode.
 
 ## Installation
@@ -78,6 +78,7 @@ If accurate mode is required, please install [infernal](http://eddylab.org/infer
 > [!TIP]
 > If `--accurate` option is set, cmscan(infernal) is used for rRNA search instead of pyhmmer.nhmmer.
 > Although cmscan is slower than pyhmmer.nhmmer, it is expected to give more accurate results because it performs rRNA searches using RNA secondary structure profiles.
+> Accurate mode uses bundled Rfam clanin files with cmscan to handle overlapping homologous Rfam models.
 
 ### CLI Example
 
@@ -153,8 +154,8 @@ for rec in result.get_rrna_seq_records():
 ## LICENSE
 
 pybarrnap was reimplemented in python based on the perl implementation of Barrnap v0.9.
-HMM(Hidden Marcov Model) and CM(Covariance Model) profile database for pybarrnap was created from Rfam(14.10).
+HMM(Hidden Marcov Model) and CM(Covariance Model) profile database for pybarrnap was created from Rfam(15.1).
 
 - pybarrnap: [GPLv3](https://github.com/moshi4/pybarrnap/blob/main/LICENSE)  
 - Barrnap([v0.9](https://github.com/tseemann/barrnap/tree/0.9)): [GPLv3](https://github.com/moshi4/pybarrnap/blob/main/src/pybarrnap/db/LICENSE.Barrnap)
-- Rfam([14.10](https://ftp.ebi.ac.uk/pub/databases/Rfam/14.10/)): [CC0](https://github.com/moshi4/pybarrnap/blob/main/src/pybarrnap/db/LICENSE.Rfam)
+- Rfam([15.1](https://ftp.ebi.ac.uk/pub/databases/Rfam/15.1/)): [CC0](https://github.com/moshi4/pybarrnap/blob/main/src/pybarrnap/db/LICENSE.Rfam)

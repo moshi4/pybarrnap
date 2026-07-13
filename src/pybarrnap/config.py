@@ -11,6 +11,10 @@ KINGDOMS = ["arc", "bac", "euk", "all"]  # 'all' is only cm database
 KINGDOM2HMM_DB = {k: _hmm_db_path / f"{k}.hmm" for k in KINGDOMS}
 KINGDOM2CM_DB = {k: _cm_db_path / f"{k}.cm" for k in KINGDOMS}
 
+RFAM_CLANIN = _cm_db_path / "Rfam.clanin"
+KINGDOM2CLANIN = {k: _cm_db_path / f"{k}.clanin" for k in KINGDOMS}
+KINGDOM2CLANIN["all"] = RFAM_CLANIN
+
 SEQTYPE2LEN: dict[str, int] = {
     "5S_rRNA": 119,
     "16S_rRNA": 1585,

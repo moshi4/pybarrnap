@@ -2,7 +2,8 @@
   Rfam HMM profile database build script for pyhmmer.nhmmer rRNA search.
 
 - `build_CMs.sh`  
-  Rfam CM profile database build script for cmscan rRNA search.
+  Rfam CM profile database build script for cmscan rRNA search. Also bundles
+  filtered clanin files for cmscan overlap handling.
 
 **Rfam resource accession for rRNA search**:
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RFAM_VERSION="14.10"
+RFAM_VERSION="15.1"
 DB_OUTDIR="./db/hmm"
 
 # Download RFAM annotated seed alignments
