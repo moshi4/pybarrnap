@@ -21,6 +21,7 @@ from pyhmmer.plan7 import HMMFile
 
 import pybarrnap
 from pybarrnap.config import (
+    KINGDOM2CLANIN,
     KINGDOM2CM_DB,
     KINGDOM2HMM_DB,
     KINGDOMS,
@@ -217,6 +218,7 @@ class Barrnap:
         """Run cmscan (slower, higher accuracy for rRNA prediction)"""
         # Setup CM database
         cm_db = KINGDOM2CM_DB[self._kingdom]
+        clanin = KINGDOM2CLANIN[self._kingdom]
         logger.info(f"Use CM DB: {cm_db}")
 
         # Run cmscan
@@ -230,7 +232,7 @@ class Barrnap:
             result_file = tmpdir / "result.tblout"
             total_seq_len = sum([len(rec.seq) for rec in self._seq_records])  # type: ignore
             Z = 2 * total_seq_len / 1000000
-            cmd = f"cmscan --rfam --nohmmonly --noali --cut_ga --oskip --fmt 2 --cpu {self._threads} -Z {Z} --tblout {result_file} {cm_db} {seq_fasta_file}"  # noqa: E501
+            cmd = f"cmscan --rfam --nohmmonly --noali --cut_ga --oskip --fmt 2 --cpu {self._threads} -Z {Z} --tblout {result_file} --clanin {clanin} {cm_db} {seq_fasta_file}"  # noqa: E501
             logger.info(f"$ {cmd}")
             cmd_args = shlex.split(cmd)
             cmd_res = sp.run(cmd_args, capture_output=True, text=True, check=False)
