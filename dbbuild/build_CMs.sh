@@ -121,7 +121,7 @@ filter_clanin "$ARC_MODELS" "${DB_OUTDIR}/arc.clanin"
 echo "Fetch Eukaryote clanins"
 filter_clanin "$EUK_MODELS" "${DB_OUTDIR}/euk.clanin"
 echo "Fetch All Kingdoms clanins"
-filter_clanin "$ALL_MODELS" "${DB_OUTDIR}/${RFAM_CLANIN}"
+filter_clanin "$ALL_MODELS" "${DB_OUTDIR}/all.clanin"
 
 # Build CM database
 for CM_FILE in $BAC_CM_FILE $ARC_CM_FILE $EUK_CM_FILE $ALL_CM_FILE; do
